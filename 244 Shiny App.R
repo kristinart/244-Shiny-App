@@ -165,3 +165,27 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 
 ###############################################################################################################################################################################
+
+
+# work on theme
+
+theme1 <- bs_theme(
+  version = version = 5,
+  bootswatch = NULL,
+  bg = "white",
+  fg = "black",
+  primary = "purple",
+  secondary = "turquoise",
+  success = "green",
+  info = "dodgerblue",
+  warning = "yellow",
+  danger = "red",
+  base_font = font_google("Merriweather"),
+  code_font = font_google("Asar"),
+  heading_font = font_google("Gravitas One"),
+  font_scale = "1"
+  )
+
+#Helpful info
+#fonts: https://fonts.google.com
+#colors: https://r-charts.com/colors/
