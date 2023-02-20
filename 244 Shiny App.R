@@ -44,7 +44,7 @@ unique(df_combined$treatment_id)
 # Create three panels/ tabs for the shiny app
 # panel 1 will display background info including the experimental setup, habitat types, a map of the sites/ habitats in AZ
 ui <- fluidPage(
-  theme = shinytheme("cerulean"),
+#  theme = theme1,
   navbarPage("Brittlebush Productivity and Arthropod Community Characteristics",
              tabPanel("panel_1",
                       titlePanel("Introduction and Background"),
@@ -52,9 +52,9 @@ ui <- fluidPage(
                       p("Let's insert a summary blurb about the experiment here"),
                       sidebarLayout(
                         sidebarPanel(
-                          selectInput(radioButtons(inputId = 'habitat_type',
+                          selectInput(radioButtons(inputId = "habitat_type",
                                                               label = "Choose habitat type",
-                                                              choices = c("Urban"= Urban,"Desert"= Desert,"Remnant"= Remnant))),
+                                                              choices = unique(df_combined$habitat_type)),
                         ), #end of sidebar panel 1
                         mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.")
                       )),#end of panel 1
@@ -62,32 +62,33 @@ ui <- fluidPage(
                       titlePanel("Brittlebush Productivity Under Varying Conditions"),
                       p("Insert blurb on productivity of the plants under the various treatments"),
                       sidebarPanel(
-                        selectInput(checkboxGroupInput("water", label = "Water treatment",
-                                                       choices = c("low water" = LOW, "medium water" = MEDIUM, "high water" = HIGH),
+                        selectInput(checkboxGroupInput(inputId = "water", label = "Water treatment",
+                                                       choices = unique(df_combined$water),
                                                        "cage", label = "Cage treatment",
-                                                       choices = list("cage" = 1, "no cage" = 0)))),
+                                                       choices = unique(df_combined$cage)
+                                                       ))),
                       mainPanel("output: box and whisket plot of plant productivity under the chosen combination of treatment conditions")
                       ), #end of panel 2
              tabPanel("panel_3",
                       titlePanel("Arthropod Community Characteristics Under Varying Conditions"),
                       p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions"),
                       sidebarPanel(
-                        selectInput(checkboxGroupInput(selectInput(inputId = 'treatment_id',
+                        selectInput(checkboxGroupInput(selectInput(inputId = "treatment_id",
                                                                    label = "Select cluster treatment",
-                                                                   choices = c("R","O","B","G","Y","P"))))),
+                                                                   choices = unique(df_combined$treatment_id)))),
                       mainPanel("output: ")
                       )#end of panel 3
              )#end of navbarPage
   ) #end of fluid page
-
+))
 server <-function(input, output){}
 shinyApp(ui = ui, server = server)
 
 
-server <- function(input, output) {
-  # You can access the values of the widget (as a vector) with input$checkGroup, e.g.
-  output$value <- renderPrint({ input$checkGroup })}
-shinyApp(ui = ui, server = server)
+#server <- function(input, output) {
+#  # You can access the values of the widget (as a vector) with input$checkGroup, e.g.
+#  output$value <- renderPrint({ input$checkGroup })}
+#shinyApp(ui = ui, server = server)
 
 ###############################################################################################################################################################################
 
