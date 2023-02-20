@@ -43,126 +43,53 @@ unique(df_combined$treatment_id)
 # App building time!
 # Create three panels/ tabs for the shiny app
 # panel 1 will display background info including the experimental setup, habitat types, a map of the sites/ habitats in AZ
-panel_1 <- tabPanel(
-  titlePanel("Introduction and Background"),
-  img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
-  p("Let's insert a summary blurb about the experiment here")
-)
-
-sidebar_1 <-
-  sidebarPanel(
-    selectInput(radioButtons(inputId = 'habitat_type',
-                             label = "Choose habitat type",
-                             choices = c("Urban","Desert","Remnant"))),
-    main_1 <- mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.")
-  )
-
-
-#For tab 2:
-panel_2 <- tabPanel(
-  titlePanel("Brittlebush Productivity Under Varying Conditions"),
-  p("Insert blurb on productivity of the plants under the various treatments")
-)
-
-sidebar_2 <-
-  sidebarPanel(
-    selectInput(checkboxGroupInput("checkGroup", label = h3("Water treatment"),
-                                   choices = list("low water" = 1, "medium water" = 2, "high water" = 3),
-                                   "checkGroup", label = h3("Cage treatment"),
-                                   choices = list("cage" = 1, "no cage" = 2))),
-    main_2 <- mainPanel("output: box and whisket plot of plant productivity under the chosen combination of treatment conditions")
-  )
-
-panel_3 <- tabPanel(
-  titlePanel("Arthropod Community Characteristics Under Varying Conditions"),
-  p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions")
-)
-
-sidebar_3 <-
-  sidebarPanel(
-    selectInput(checkboxGroupInput(selectInput(inputId = 'treatment',
-                                               label = "Select cluster treatment",
-                                               choices = c("Awesome red!" = "red", #widgets 2 and 3
-                                                           "Pretty purple" = "purple",
-                                                           "ORAAANGE" = "orange")))),
-    main_3 <- mainPanel("output: ")
-  )
-
-
-
-
-ui <- navbarPage(
-  titlePanel("Brittlebush Productivity and Arthropod Community Characteristics"),
-  panel_1,
-  panel_2,
-  panel_3
-)
-
-
-
-
-
-
-
-
 ui <- fluidPage(
   theme = shinytheme("cerulean"),
-  titlePanel("Brittlebush Productivity and Arthropod Community Characteristics"),
-  sidebarLayout(
-    sidebarPanel("put my widgets here",
-                 checkboxGroupInput("checkGroup", label = h3("Water treatment"),
-                                    choices = list("low water" = 1, "medium water" = 2, "high water" = 3)),
-                 radioButtons(inputId = 'habitat_type',
-                              label = "Choose habitat type",
-                              choices = c("Urban","Desert","Remnant")),
-                 selectInput(inputId = 'treatment',
-                             label = "Select cluster treatment",
-                             choices = c("Awesome red!" = "red",
-                                         "Pretty purple" = "purple",
-                                         "ORAAANGE" = "orange"))
-    ),
-    mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.")
-  )
-)
+  navbarPage("Brittlebush Productivity and Arthropod Community Characteristics",
+             tabPanel("panel_1",
+                      titlePanel("Introduction and Background"),
+                      img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
+                      p("Let's insert a summary blurb about the experiment here"),
+                      sidebarLayout(
+                        sidebarPanel(
+                          selectInput(radioButtons(inputId = 'habitat_type',
+                                                              label = "Choose habitat type",
+                                                              choices = c("Urban"= Urban,"Desert"= Desert,"Remnant"= Remnant))),
+                        ), #end of sidebar panel 1
+                        mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.")
+                      )),#end of panel 1
+             tabPanel("panel_2",
+                      titlePanel("Brittlebush Productivity Under Varying Conditions"),
+                      p("Insert blurb on productivity of the plants under the various treatments"),
+                      sidebarPanel(
+                        selectInput(checkboxGroupInput("water", label = "Water treatment",
+                                                       choices = c("low water" = LOW, "medium water" = MEDIUM, "high water" = HIGH),
+                                                       "cage", label = "Cage treatment",
+                                                       choices = list("cage" = 1, "no cage" = 0)))),
+                      mainPanel("output: box and whisket plot of plant productivity under the chosen combination of treatment conditions")
+                      ), #end of panel 2
+             tabPanel("panel_3",
+                      titlePanel("Arthropod Community Characteristics Under Varying Conditions"),
+                      p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions"),
+                      sidebarPanel(
+                        selectInput(checkboxGroupInput(selectInput(inputId = 'treatment_id',
+                                                                   label = "Select cluster treatment",
+                                                                   choices = c("R","O","B","G","Y","P"))))),
+                      mainPanel("output: ")
+                      )#end of panel 3
+             )#end of navbarPage
+  ) #end of fluid page
+
+server <-function(input, output){}
+shinyApp(ui = ui, server = server)
+
 
 server <- function(input, output) {
-  # You can access the values of the widget (as a vector)
-  # with input$checkGroup, e.g.
+  # You can access the values of the widget (as a vector) with input$checkGroup, e.g.
   output$value <- renderPrint({ input$checkGroup })}
-
-
 shinyApp(ui = ui, server = server)
 
 ###############################################################################################################################################################################
-# Below this is notes to be deleted later
-# Create the shiny app's user interface:
-ui <- fluidPage(
-  theme = shinytheme("cerulean"),
-  titlePanel("Brittlebush Productivity and Arthropod Community Characteristics"),
-  sidebarLayout(
-    sidebarPanel("put my widgets here",
-                 checkboxGroupInput("checkGroup", label = h3("Water treatment"),
-                                    choices = list("low water" = 1, "medium water" = 2, "high water" = 3)),
-                 radioButtons(inputId = 'habitat_type',
-                              label = "Choose habitat type",
-                              choices = c("Urban","Desert","Remnant")),
-                 selectInput(inputId = 'treatment',
-                             label = "Select cluster treatment",
-                             choices = c("Awesome red!" = "red",
-                                         "Pretty purple" = "purple",
-                                         "ORAAANGE" = "orange"))
-                 ),
-    mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.")
-)
-)
-
-server <- function(input, output) {
-  # You can access the values of the widget (as a vector)
-  # with input$checkGroup, e.g.
-  output$value <- renderPrint({ input$checkGroup })}
-
-
-shinyApp(ui = ui, server = server)
 
 ###############################################################################################################################################################################
 
