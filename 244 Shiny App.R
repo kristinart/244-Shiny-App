@@ -65,7 +65,7 @@ ui <- fluidPage(
              tabPanel("panel_1",
                       titlePanel("Introduction and Background"),
                       img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
-                      p("Let's insert a summary blurb about the experiment here"),
+                      p("This study examined the species abundance, richness, and evenness of arthropods, and the plant productivity of brittlebush, in response to different habitats and treatment conditions. The purpose of the study was to better understand any potential impact of different habitat types and growing conditions on urban biodiversity."),
                       sidebarLayout(
                         sidebarPanel(
                           #selectInput(#radioButtons(inputId = "habitat_type",
