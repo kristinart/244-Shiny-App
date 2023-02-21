@@ -74,7 +74,7 @@ ui <- fluidPage(
                                       ), #end of sidebar panel
                       #),#end of sidebar layout
                         mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.")
-                      ),
+                      )),
              tabPanel("panel_2",
                       titlePanel("Brittlebush Productivity Under Varying Conditions"),
                       p("Insert blurb on productivity of the plants under the various treatments"),
@@ -87,7 +87,7 @@ ui <- fluidPage(
                                                        #choices = unique(df_combined$cage)
                         ),
                         mainPanel("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions")
-                      ), #end of panel 2
+                      )), #end of panel 2
              tabPanel("panel_3",
                       titlePanel("Arthropod Community Characteristics Under Varying Conditions"),
                       p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions"),
@@ -101,7 +101,7 @@ ui <- fluidPage(
                       )#end of panel 3
              )#end of navbarPage
   ) #end of fluid page
-)))
+)
 server <-function(input, output){}
 shinyApp(ui = ui, server = server)
 
