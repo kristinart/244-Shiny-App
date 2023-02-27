@@ -1,6 +1,6 @@
-#
+
 # This is a Shiny web application. You can run the application by clicking the 'Run App' button above.
-#
+
 library(shiny)
 library(tidyverse)
 library(here)
@@ -95,6 +95,21 @@ server <-function(input, output){
                y = plant_dry_mass) +
              geom_point()
     )
+
+  })
+  # widget_treatment_type data
+  treatment_select <- reactive({
+    df_final %>%
+      filter(treatment_id == input$treatment_id)
+  })
+
+  #widget_treatment_type plot
+  output$treatment_plot <- renderPlot({
+    ggplot(data = treatment_select(),
+           aes(x = treatment_id,
+               y = plant_dry_mass)) +
+      geom_boxplot()
+
   })
 
 }

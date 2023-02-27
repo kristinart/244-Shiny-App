@@ -1,4 +1,5 @@
-#Attach packages
+# clean up raw data before importing into shiny app (app.R)
+
 library(shiny)
 library(tidyverse)
 library(here)
