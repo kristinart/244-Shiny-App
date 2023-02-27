@@ -52,12 +52,9 @@ ui <- fluidPage(
                       p("Insert blurb on productivity of the plants under the various treatments"),
                       sidebarLayout(
                         sidebarPanel(
-                        selectInput(checkboxGroupInput(inputId = "water",
+                        selectInput(checkboxGroupInput(inputId = "treatment_id",
                                                        label = "Water treatment",
-                                                       choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH")),
-                                    checkboxGroupInput(inputId = "cage",
-                                                       label = "Cage treatment",
-                                                       choices = c("cage" = 1, "no cage" = 0))
+                                                       choices = c("Low" = "R", "Low" = "O", "Medium" = "B", "Medium" = "G", "High" = "Y", "High" = "P")),
                                       ),  #  end select input
                         ), # end sidebar panel
                         mainPanel("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions",
@@ -89,9 +86,23 @@ server <-function(input, output){
   output$habitat_plot <- renderPlot({
     ggplot(data = habitat_select(),
            aes(x = habitat_type,
-               y = plant_dry_mass) +
+               y = plant_dry_mass)) +
              geom_point()
-    )
+  })
+
+  # widget_treatment_type data
+  treatment_select <- reactive({
+    df_final %>%
+      filter(treatment_id == input$treatment_id)
+  })
+
+  #widget_treatment_type plot
+  output$treatment_plot <- renderPlot({
+    ggplot(data = treatment_select(),
+           aes(x = treatment_id,
+               y = plant_dry_mass)) +
+      geom_boxplot()
+
   })
 
 }
