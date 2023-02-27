@@ -44,19 +44,23 @@ ui <- fluidPage(
                                                 ) # end of select Input
                                       ), #end of sidebar panel
                       ),#end of sidebar layout
-                        mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.")
+                        mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.",
+                                  plotOutput(outputId = "habitat_plot"))
                       ), # end of tab panel 1
              tabPanel("panel_2",
                       titlePanel("Brittlebush Productivity Under Varying Conditions"),
                       p("Insert blurb on productivity of the plants under the various treatments"),
                       sidebarLayout(
                         sidebarPanel(
-                        #selectInput(checkboxGroupInput(#inputId = "water",
-                                                       #label = "Water treatment",
-                                                       #choices = unique(df_combined$water)#,
-                                                       #"cage", label = "Cage treatment",
-                                                       #choices = unique(df_combined$cage)
-                        ),
+                        selectInput(checkboxGroupInput(inputId = "water",
+                                                       label = "Water treatment",
+                                                       choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH")),
+                                    checkboxGroupInput(inputId = "cage",
+                                                       label = "Cage treatment",
+                                                       choices = c(1, 0))
+                                                        ),
+                        )  #  end select input
+                        ), # end sidebar panel
                         mainPanel("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions")
                       )), #end of panel 2
              tabPanel("panel_3",
@@ -74,11 +78,14 @@ ui <- fluidPage(
   ) #end of fluid page
 
 server <-function(input, output){
+
+  #widget_habitat_type data
   habitat_select <- reactive({
-    df_combined %>%
+    df_final %>%
       filter(habitat_type == input$habitat_type)
     })
 
+  #widget_habitat_type plot
   output$habitat_plot <- renderPlot({
     ggplot(data = habitat_select(),
            aes(x = habitat_type,
