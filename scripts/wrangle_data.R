@@ -37,7 +37,9 @@ df_2008 <- df_2008 %>%
 # colnames(df_2008)
 common_col_names <- intersect(names(df_2007), names(df_2008))
 #Join 2007 and 2008 dataframes below
-df_combined <- merge(df_2007, df_2008, by=common_col_names, all.x=TRUE)
+df_combined <- merge(df_2007, df_2008, by=common_col_names, all.x=TRUE) %>%
+  drop_na(plant_dry_mass)
+
 head(df_combined)
 
 colnames(df_combined)
@@ -47,3 +49,4 @@ unique(df_combined$habitat_type)
 unique(df_combined$treatment_id)
 
 write.csv(df_combined, "/Users/kristinart/Library/CloudStorage/GoogleDrive-kristinart@ucsb.edu/My Drive/Winter 2023/ESM 244/Assignments/Shiny App/244-shiny-app/data/df_final.csv")
+
