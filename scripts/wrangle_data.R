@@ -5,6 +5,7 @@ library(tidyverse)
 library(here)
 library(shinythemes)
 library(bslib)
+library(lubridate)
 
 
 #Load and wrangle data
@@ -23,23 +24,28 @@ arthropods_2007 <- arthropods_2007 %>%
                                 cage=="0" & water=="HIGH" ~ "P",
                                 TRUE ~'NA'))
 
-df_2007 <- plants_2007 %>% inner_join( arthropods_2007,
-                                       by=c('plant_id','treatment_id', 'habitat_type','site_id','site_number','name'))
+df_2007 <- plants_2007 %>% inner_join(arthropods_2007,
+                                      by=c('plant_id','treatment_id', 'habitat_type','site_id','site_number','name'))
 df_2007 <- df_2007 %>%
-  mutate(year = 2007)
+  mutate(year = 2007) %>%
+  rename(super_family = 'superfamily') %>%
+  select(c(-'species',-'sum_biomass'))
 
 df_2008 <- plants_2008 %>% inner_join(arthropods_2008,
                                       by=c('plant_id','treatment_id','month', 'habitat_type','site_id','site_number','name'))
 df_2008 <- df_2008 %>%
-  mutate(year = 2008)
+  mutate(year = 2008) %>%
+  select(c(-'month_number'))
 
-# cols_ls <- colnames(df_2007)
+colnames(df_2007)
 # print(cols_ls)
-# colnames(df_2008)
+colnames(df_2008)
+
 common_col_names <- intersect(names(df_2007), names(df_2008))
 #Join 2007 and 2008 dataframes below
-df_combined <- merge(df_2007, df_2008, by=common_col_names, all.x=TRUE) %>%
-  drop_na(plant_dry_mass)
+df_combined <- rbind(df_2007, df_2008) %>%
+  drop_na(plant_dry_mass) %>%
+  mutate(date = format(lubridate::ymd(paste0(year,month,"01")), "%m-%Y"))
 
 head(df_combined)
 

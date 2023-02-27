@@ -7,7 +7,7 @@ library(here)
 library(shinythemes)
 library(bslib)
 
-data <- read_csv(here('data','df_final.csv'))
+df_final <- read_csv(here('data','df_final.csv'))
 
 # ui <- fluidPage(
 #   theme = bs_theme(
@@ -70,21 +70,30 @@ ui <- navbarPage(title = "Brittlebush Productivity and Arthropod Community Chara
                             p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions"),
                             sidebarLayout(
                               sidebarPanel(
-                                checkboxGroupInput(inputId = "treatment_id",
-                                                   label = "Select cluster treatment",
-                                                   choices = unique(data$treatment_id)
-                                )
+                                selectInput("treatment_id",
+                                            "Select cluster treatment",
+                                            choices = unique(df_final$treatment_id)),
+                                # checkboxGroupInput(inputId = "treatment_id",
+                                #                    label = "Select cluster treatment",
+                                #                    choices = unique(df_final$treatment_id)),
+                                sliderInput("date",
+                                            label = "Date Slider",
+                                            min = 01-2007,
+                                            max = 12-2008,
+                                            value =01-2008,
+                                            timeFormat="%m %Y")
                               ), #end of sidebar panel
-                              mainPanel("output: ")
-                              ) #end of sidebar layour
+                              mainPanel("output:", textOutput("SliderText"))
+                              ) #end of sidebar layout
                             ) #end of fluidpage
                  ) #end of tab 3
                  )#end of navbarPage
 
+
 server <-function(input, output){
   #widget_habitat_type data
   habitat_select <- reactive({
-    data %>%
+    df_final %>%
       filter(habitat_type == input$habitat_type)
   })
 
@@ -97,6 +106,7 @@ server <-function(input, output){
     )
 
   })
+
   # widget_treatment_type data
   treatment_select <- reactive({
     df_final %>%
@@ -112,7 +122,40 @@ server <-function(input, output){
 
   })
 
+   # # widget3_arthropod_treatment_id data
+   # treatment_select <- reactive({
+   #   df_final %>%
+   #     filter(treatment_id == input$treatment_id)
+   # })
+   #
+   # #widget3_arthropod_treatment_id plot
+   # output$treatment_plot <- renderPlot({
+   #   ggplot(data = treatment_select(),
+   #          aes(x = treatment_id,
+   #              y = plant_dry_mass)) +
+   #     geom_boxplot()
+   #
+   # })
+   #
+   # # widget4_arthropod_abundance_date data
+   # treatment_select <- reactive({
+   #   df_final %>%
+   #     filter(treatment_id == input$treatment_id)
+   # })
+   #
+   # #widget4_arthropod_abundance_date plot
+   # output$treatment_plot <- renderPlot({
+   #   ggplot(data = treatment_select(),
+   #          aes(x = treatment_id,
+   #              y = plant_dry_mass)) +
+   #     geom_boxplot()
+   #
+   # })
+
 }
+
+
+
 
 
 shinyApp(ui = ui, server = server)
