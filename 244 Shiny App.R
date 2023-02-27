@@ -57,11 +57,11 @@ ui <- fluidPage(
                                                        choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH")),
                                     checkboxGroupInput(inputId = "cage",
                                                        label = "Cage treatment",
-                                                       choices = c(1, 0))
-                                                        ),
-                        )  #  end select input
+                                                       choices = c("cage" = 1, "no cage" = 0))
+                                      ),  #  end select input
                         ), # end sidebar panel
-                        mainPanel("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions")
+                        mainPanel("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions",
+                                  plotOutput(outputId = "treatment_plot"))
                       )), #end of panel 2
              tabPanel("panel_3",
                       titlePanel("Arthropod Community Characteristics Under Varying Conditions"),
