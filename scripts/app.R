@@ -70,20 +70,21 @@ ui <- navbarPage(title = "Brittlebush Productivity and Arthropod Community Chara
                             p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions"),
                             sidebarLayout(
                               sidebarPanel(
-                                selectInput("treatment_id",
+                                selectInput("treatment_name",
                                             "Select cluster treatment",
-                                            choices = unique(df_final$treatment_id)),
+                                            choices = unique(df_final$treatment_name)),
                                 # checkboxGroupInput(inputId = "treatment_id",
                                 #                    label = "Select cluster treatment",
                                 #                    choices = unique(df_final$treatment_id)),
                                 sliderInput("date",
                                             label = "Date Slider",
-                                            min = 01-2007,
+                                            min = 01-2008,
                                             max = 12-2008,
                                             value =01-2008,
                                             timeFormat="%m %Y")
                               ), #end of sidebar panel
-                              mainPanel("output:", textOutput("SliderText"))
+                              mainPanel("output:",
+                                        plotOutput(outputId = "arth_treatment_plot"))
                               ) #end of sidebar layout
                             ) #end of fluidpage
                  ) #end of tab 3
@@ -91,52 +92,68 @@ ui <- navbarPage(title = "Brittlebush Productivity and Arthropod Community Chara
 
 
 server <-function(input, output){
-  #widget_habitat_type data
-  habitat_select <- reactive({
-    df_final %>%
-      filter(habitat_type == input$habitat_type)
-  })
+  # #widget_habitat_type data
+  # habitat_select <- reactive({
+  #   df_final %>%
+  #     filter(habitat_type == input$habitat_type)
+  # })
+  #
+  # #widget_habitat_type plot
+  # output$habitat_plot <- renderPlot({
+  #   ggplot(data = habitat_select(),
+  #          aes(x = habitat_type,
+  #              y = plant_dry_mass) +
+  #            geom_point()
+  #   )
+  #
+  # })
+  #
+  # # widget_treatment_type data
+  # treatment_select <- reactive({
+  #   df_final %>%
+  #     filter(treatment_id == input$treatment_id)
+  # })
+  #
+  # #widget_treatment_type plot
+  # output$treatment_plot <- renderPlot({
+  #   ggplot(data = treatment_select(),
+  #          aes(x = treatment_id,
+  #              y = plant_dry_mass)) +
+  #     geom_boxplot()
+  #
+  # })
 
-  #widget_habitat_type plot
-  output$habitat_plot <- renderPlot({
-    ggplot(data = habitat_select(),
-           aes(x = habitat_type,
-               y = plant_dry_mass) +
-             geom_point()
-    )
+   # widget3_arthropod_treatment_id data
+   arth_treatment_select <- reactive({
+     df_final %>%
+       filter(treatment_name == input$treatment_name) %>%
+       #filter(treatment_name == 'high water + cage') %>%
+       drop_na(indiv_count) %>%
+       group_by(date,  habitat_type) %>% #site_id,
+       summarise(sum(indiv_count)) %>%
+       rename('total_arth' = 3) %>%
+       arrange(date)
+     })
+     #treatment_title = df_final$treatment_name = 'high water + cage'
+     # arth_treatment_select <- reactive({
+     #   treatment_title = df_final$treatment_name == input$treatment_name
+     #   })
+   treatment_title <- reactive({
+     df_final %>%
+       filter(treatment_name == input$treatment_name) %>%
+       select(treatment_name)
+   })
 
-  })
+   #widget3_arthropod_treatment_id plot
+   output$arth_treatment_plot <- renderPlot({
+     ggplot(data = arth_treatment_select(), aes(x = date, y = total_arth, colour = habitat_type)) +
+       geom_line(aes(colour = habitat_type, group = habitat_type)) +
+       geom_point(size = 1.5)+
+       labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = paste0('Total arthropod count by month on brittlebush plants treated with ','treatment_title'))+
+       theme_minimal()
 
-  # widget_treatment_type data
-  treatment_select <- reactive({
-    df_final %>%
-      filter(treatment_id == input$treatment_id)
-  })
+   })
 
-  #widget_treatment_type plot
-  output$treatment_plot <- renderPlot({
-    ggplot(data = treatment_select(),
-           aes(x = treatment_id,
-               y = plant_dry_mass)) +
-      geom_boxplot()
-
-  })
-
-   # # widget3_arthropod_treatment_id data
-   # treatment_select <- reactive({
-   #   df_final %>%
-   #     filter(treatment_id == input$treatment_id)
-   # })
-   #
-   # #widget3_arthropod_treatment_id plot
-   # output$treatment_plot <- renderPlot({
-   #   ggplot(data = treatment_select(),
-   #          aes(x = treatment_id,
-   #              y = plant_dry_mass)) +
-   #     geom_boxplot()
-   #
-   # })
-   #
    # # widget4_arthropod_abundance_date data
    # treatment_select <- reactive({
    #   df_final %>%
