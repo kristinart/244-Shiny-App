@@ -86,8 +86,7 @@ ui <- fluidPage(
                                             value = c(1,6),
                                             step = 1)
                               ), #end of sidebar panel
-                              mainPanel(
-                                        plotOutput(outputId = "arth_treatment_plot"),
+                              mainPanel(plotOutput(outputId = "arth_treatment_plot"),
                                         plotOutput(outputId = "date_plot"))
                               ) #end of sidebar layout
                             ) #end of fluidpage
@@ -173,7 +172,7 @@ server <-function(input, output, session){
        ggplot()+
        geom_line(aes(x = month_number, y = indiv_count))+
        coord_cartesian(xlim=input$date_slider)+
-       labs(x = "Month Number", y = "Average arthropod count per plant")
+       labs(x = "Month Number", y = "Average arthropod count per plant")+
        theme_minimal()
 
    })
