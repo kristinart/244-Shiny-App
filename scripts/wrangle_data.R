@@ -6,6 +6,7 @@ library(here)
 library(shinythemes)
 library(bslib)
 library(lubridate)
+library(tsibble)
 
 
 #Load and wrangle data
@@ -35,8 +36,7 @@ df_2008 <- plants_2008 %>% inner_join(arthropods_2008,
                                       by=c('plant_id','treatment_id','month', 'habitat_type','site_id','site_number','name'))
 df_2008 <- df_2008 %>%
   mutate(year = 2008,
-         date = format(lubridate::ymd(paste0(year,month,"01")), "%Y-%m")) #%>%
-  #select(c(-'month_number'))
+         date = format(lubridate::mdy(paste0(month,"01", year)), "%m-%d-%Y")) #%>%
 
 #colnames(df_2007)
 # print(cols_ls)
@@ -52,8 +52,8 @@ df_2008 <- df_2008 %>%
                                                   treatment_id=="Y"~"high water + cage",
                                                   treatment_id=="P"~"high water + no cage",
                                                   TRUE ~ treatment_id)) %>%
-  select(date, site_id, name, habitat_type, plant_id, treatment_id, treatment_name, plant_dry_mass, genus, indiv_count)
-
+  select(date, month_number, month, year, site_id, name, habitat_type, plant_id, treatment_id, treatment_name, plant_dry_mass, genus, indiv_count)
+unique(plants_2008$month)
 # common_col_names <- intersect(names(df_2007), names(df_2008))
 # #Join 2007 and 2008 dataframes below
 # df_combined <- rbind(df_2007, df_2008) %>%

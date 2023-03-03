@@ -9,25 +9,24 @@ library(bslib)
 
 df_final <- read_csv(here('data','df_final.csv'))
 
-# ui <- fluidPage(
-#   theme = bs_theme(
-#     version = 5,
-#     bootswatch = NULL,
-#     bg = "white",
-#     fg = "black",
-#     primary = "purple",
-#     secondary = "turquoise",
-#     success = "green",
-#     info = "dodgerblue",
-#     warning = "yellow",
-#     danger = "red",
-#     base_font = font_google("Merriweather"),
-#     code_font = font_google("Asar"),
-#     heading_font = font_google("Gravitas One"),
-#     font_scale = 1
-#   ), ### end of theme
-
-ui <- navbarPage(title = "Brittlebush Productivity and Arthropod Community Characteristics",
+ui <- fluidPage(
+  theme = bs_theme(
+    version = 5,
+    bootswatch = NULL,
+    bg = "white",
+    fg = "black",
+    primary = "purple",
+    secondary = "turquoise",
+    success = "green",
+    info = "dodgerblue",
+    warning = "yellow",
+    danger = "red",
+    base_font = font_google("Merriweather"),
+    code_font = font_google("Asar"),
+    heading_font = font_google("Gravitas One"),
+    font_scale = 1
+  ), ### end of theme
+  navbarPage(title = "Brittlebush Productivity and Arthropod Community Characteristics",
                  tabPanel(title = "Background",
                  fluidPage(
                    titlePanel("Introduction and Background"),
@@ -66,32 +65,37 @@ ui <- navbarPage(title = "Brittlebush Productivity and Arthropod Community Chara
 
                  tabPanel(title = "Arthropods",
                           fluidPage(
-                            titlePanel("Arthropod Community Characteristics Under Varying Conditions"),
-                            p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions"),
+                            titlePanel("Arthropod Abundance on Brittlebush Grown Under Varying Conditions"),
+                            p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions.
+                              Planning to clean up and pretty both plots. For top plot, planning to remove 12-1-2008 (or check if
+                              that was actually 12-2007?? I think it might be because this data is such a mess). For bottom plot, hoping
+                              to get a second y-axis to display plant dry mass too; since they are of such different magnitudes,
+                              it doesn't look good to have them plotted on the same axis. Also hoping to get the slider widget and
+                              x-axis of the plot to have month names (Jan Feb Mar, etc) as the tick labels. Lastly, open to displaying
+                              something else on this tab...we originally talked about species richness but idrk if I want to try to
+                              calculate that with the unclear labels in this dataset..."),
                             sidebarLayout(
                               sidebarPanel(
                                 selectInput("treatment_name",
                                             "Select cluster treatment",
                                             choices = unique(df_final$treatment_name)),
-                                # checkboxGroupInput(inputId = "treatment_id",
-                                #                    label = "Select cluster treatment",
-                                #                    choices = unique(df_final$treatment_id)),
-                                sliderInput("date",
-                                            label = "Date Slider",
-                                            min = 01-2008,
-                                            max = 12-2008,
-                                            value =01-2008,
-                                            timeFormat="%m %Y")
+                                sliderInput(inputId = "date_slider",
+                                            label = "Select month range",
+                                            min = 1,
+                                            max = 6,
+                                            value = c(1,6),
+                                            step = 1)
                               ), #end of sidebar panel
-                              mainPanel("output:",
-                                        plotOutput(outputId = "arth_treatment_plot"))
+                              mainPanel(
+                                        plotOutput(outputId = "arth_treatment_plot"),
+                                        plotOutput(outputId = "date_plot"))
                               ) #end of sidebar layout
                             ) #end of fluidpage
                  ) #end of tab 3
                  )#end of navbarPage
+)
 
-
-server <-function(input, output){
+server <-function(input, output, session){
   # #widget_habitat_type data
   # habitat_select <- reactive({
   #   df_final %>%
@@ -148,6 +152,7 @@ server <-function(input, output){
    output$arth_treatment_plot <- renderPlot({
      ggplot(data = arth_treatment_select(), aes(x = date, y = total_arth, colour = habitat_type)) +
        geom_line(aes(colour = habitat_type, group = habitat_type)) +
+       #geom_boxplot(aes(colour = habitat_type, group = habitat_type)) +
        geom_point(size = 1.5)+
        labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = paste0('Total arthropod count by month on brittlebush plants treated with ','treatment_title'))+
        theme_minimal()
@@ -155,19 +160,23 @@ server <-function(input, output){
    })
 
    # # widget4_arthropod_abundance_date data
-   # treatment_select <- reactive({
-   #   df_final %>%
-   #     filter(treatment_id == input$treatment_id)
-   # })
-   #
-   # #widget4_arthropod_abundance_date plot
-   # output$treatment_plot <- renderPlot({
-   #   ggplot(data = treatment_select(),
-   #          aes(x = treatment_id,
-   #              y = plant_dry_mass)) +
-   #     geom_boxplot()
-   #
-   # })
+   date_select <- reactive({
+     df_final %>%
+       select(month_number,plant_dry_mass, indiv_count) %>%
+       group_by(month_number) %>%
+       summarise(across(indiv_count, ~ mean(.x, na.rm = TRUE)))
+   })
+
+   #widget4_arthropod_abundance_date plot
+   output$date_plot <- renderPlot({
+     date_select() %>%
+       ggplot()+
+       geom_line(aes(x = month_number, y = indiv_count))+
+       coord_cartesian(xlim=input$date_slider)+
+       labs(x = "Month Number", y = "Average arthropod count per plant")
+       theme_minimal()
+
+   })
 
 }
 
