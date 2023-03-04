@@ -126,24 +126,25 @@ server <-function(input, output, session){
   habitat_select <- reactive({
     df_final %>%
       filter(habitat_type %in% input$habitat_type) %>%
-      group_by(name) %>%
+      group_by(name, habitat_type) %>%
       summarize(num_of_obs = n())
   })
+  ############Check this because I think I might have the wrong data count
 
   # widget1_habitat_type plot
   output$habitat_plot <- renderPlot({
-    ggplot(data = habitat_select(),
-           aes(x = name,
-               y = num_of_obs#,
-               #color = habitat_type
-               )) +
-      geom_col() +
+    ggplot(data = habitat_select()) +
+      geom_col(aes(x = name,
+                   y = num_of_obs,
+                   color = habitat_type
+      )) +
+      scale_color_manual(values = c("black", "coral", "turquoise")) +
       labs(x = "site name",
            y = "number of observations",
            title = "Number of Observations by Site Name and Habitat Type") +
       theme_minimal()
   })
-
+########change these to fill colors, and match theme
 
 
 
