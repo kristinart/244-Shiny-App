@@ -11,22 +11,22 @@ library(cowplot)
 df_final <- read_csv(here('data','df_final.csv'))
 
 ui <- fluidPage(
-  theme = bs_theme(
-    version = 5,
-    bootswatch = NULL,
-    bg = "white",
-    fg = "black",
-    primary = "purple",
-    secondary = "turquoise",
-    success = "green",
-    info = "dodgerblue",
-    warning = "yellow",
-    danger = "red",
-    base_font = font_google("Merriweather"),
-    code_font = font_google("Asar"),
-    heading_font = font_google("Gravitas One"),
-    font_scale = 1
-  ), ### end of theme
+  # theme = bs_theme(
+  #   version = 5,
+  #   bootswatch = NULL,
+  #   bg = "white",
+  #   fg = "black",
+  #   primary = "purple",
+  #   secondary = "turquoise",
+  #   success = "green",
+  #   info = "dodgerblue",
+  #   warning = "yellow",
+  #   danger = "red",
+  #   base_font = font_google("Merriweather"),
+  #   code_font = font_google("Asar"),
+  #   heading_font = font_google("Gravitas One"),
+  #   font_scale = 1
+  #), ### end of theme
   navbarPage(title = "Brittlebush Productivity and Arthropod Community Characteristics",
                  tabPanel(title = "Background",
                  fluidPage(
@@ -35,10 +35,10 @@ ui <- fluidPage(
                    p("This study examined the species abundance, richness, and evenness of arthropods, and the plant productivity of brittlebush, in response to different habitats and treatment conditions. The purpose of the study was to better understand any potential impact of different habitat types and growing conditions on urban biodiversity."),
                    sidebarLayout(
                      sidebarPanel(
-                       (radioButtons("habitat_type",
+                       (checkboxGroupInput("habitat_type",
                                      label = "Choose habitat type",
                                      choices = c("Desert", "Remnant", "Urban"))
-                       ) #end of radio buttons
+                       ) #end of checkboxGroup
                      ), #end of sidebar panel
                      mainPanel("Output: image and description of habitat",
                                plotOutput(outputId = "habitat_image")
@@ -52,14 +52,11 @@ ui <- fluidPage(
                           p("Insert blurb on productivity of the plants under the various treatments"),
                           sidebarLayout(
                             sidebarPanel(
-                              checkboxGroupInput(inputId = "treatment_name",
+                              radioButtons(inputId = "treatment_name",
                                                  label = "Select Plant water treatment",
                                                  unique(df_final$treatment_name))
                                                  #choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH"))#,
-                              # checkboxGroupInput(inputId = "cage",
-                              #                    label = "Cage treatment",
-                              #                    choices = c(1, 0))
-                          ), # end sidebar panel
+                                    ), # end sidebar panel
                           mainPanel(#p("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions"),
                                     plotOutput(outputId = "plant_treatment_plot"))
                  ) #end of sidebar layout
@@ -131,10 +128,11 @@ server <-function(input, output, session){
   # widget2_plant_treatment_type data
   treatment_select <- reactive({
     df_final %>%
-      filter(treatment_name == input$treatment_name) %>%
-      drop_na(plant_dry_mass) %>%
-      summarise(mean(plant_dry_mass)) %>%
-      rename('avg_plant_mass' = 3)
+      filter(treatment_name == input$treatment_name) #%>%
+      #drop_na(plant_dry_mass) %>%
+      #group_by(treatment_name) %>%
+      #summarize(mean(plant_dry_mass)) #%>%
+      #rename('avg_plant_mass' = 3)
   })
 
   #widget2_plant_treatment_type plot
