@@ -35,13 +35,13 @@ ui <- fluidPage(
                    p("This study examined the species abundance, richness, and evenness of arthropods, and the plant productivity of brittlebush, in response to different habitats and treatment conditions. The purpose of the study was to better understand any potential impact of different habitat types and growing conditions on urban biodiversity."),
                    sidebarLayout(
                      sidebarPanel(
-                       (checkboxGroupInput("habitat_type",
+                       (checkboxGroupInput(inputId = "habitat_type",
                                      label = "Choose habitat type",
                                      choices = c("Desert", "Remnant", "Urban"))
                        ) #end of checkboxGroup
                      ), #end of sidebar panel
-                     mainPanel("Output: image and description of habitat",
-                               plotOutput(outputId = "habitat_image")
+                     mainPanel(#p("Output: habitat bar plot"),
+                               plotOutput(outputId = "habitat_plot")
                                ) #end of main panel
                  ) #end of sidebar layout
                  ) #end of fluid page
@@ -122,14 +122,36 @@ server <-function(input, output, session){
   #     draw_image("https://images.unsplash.com/photo-1470164971321-eb5ac2c35f2e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80")
   # })
 
+  #widget1_habitat_type data
+  habitat_select <- reactive({
+    df_final %>%
+      filter(habitat_type %in% input$habitat_type) %>%
+      group_by(name) %>%
+      summarize(num_of_obs = n())
+  })
+
+  # widget1_habitat_type plot
+  output$habitat_plot <- renderPlot({
+    ggplot(data = habitat_select(),
+           aes(x = name,
+               y = num_of_obs#,
+               #color = habitat_type
+               )) +
+      geom_col() +
+      labs(x = "site name",
+           y = "number of observations",
+           title = "Number of Observations by Site Name and Habitat Type") +
+      theme_minimal()
+  })
 
 
-  #
+
+
   # widget2_plant_treatment_type data
   treatment_select <- reactive({
     df_final %>%
-      filter(treatment_name == input$treatment_name) #%>%
-      #drop_na(plant_dry_mass) %>%
+      filter(treatment_name == input$treatment_name) %>%
+      drop_na(plant_dry_mass) #%>%
       #group_by(treatment_name) %>%
       #summarize(mean(plant_dry_mass)) #%>%
       #rename('avg_plant_mass' = 3)
