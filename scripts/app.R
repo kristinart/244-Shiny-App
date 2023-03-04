@@ -11,22 +11,22 @@ library(cowplot)
 df_final <- read_csv(here('data','df_final.csv'))
 
 ui <- fluidPage(
-  # theme = bs_theme(
-  #   version = 5,
-  #   bootswatch = NULL,
-  #   bg = "white",
-  #   fg = "black",
-  #   primary = "purple",
-  #   secondary = "turquoise",
-  #   success = "green",
-  #   info = "dodgerblue",
-  #   warning = "yellow",
-  #   danger = "red",
-  #   base_font = font_google("Merriweather"),
-  #   code_font = font_google("Asar"),
-  #   heading_font = font_google("Gravitas One"),
-  #   font_scale = 1
-  #), ### end of theme
+  theme = bs_theme(
+    version = 5,
+    bootswatch = NULL,
+    bg = "white",
+    fg = "black",
+    primary = "purple",
+    secondary = "turquoise",
+    success = "green",
+    info = "dodgerblue",
+    warning = "yellow",
+    danger = "red",
+    base_font = font_google("Merriweather"),
+    code_font = font_google("Asar"),
+    heading_font = font_google("Gravitas One"),
+    font_scale = 1
+  ), ### end of theme
   navbarPage(title = "Brittlebush Productivity and Arthropod Community Characteristics",
                  tabPanel(title = "Background",
                  fluidPage(
