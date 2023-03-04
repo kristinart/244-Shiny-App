@@ -6,6 +6,7 @@ library(tidyverse)
 library(here)
 library(shinythemes)
 library(bslib)
+library(cowplot)
 
 df_final <- read_csv(here('data','df_final.csv'))
 
@@ -39,8 +40,8 @@ ui <- fluidPage(
                                      choices = c("Desert", "Remnant", "Urban"))
                        ) #end of radio buttons
                      ), #end of sidebar panel
-                     mainPanel("output: summary map with sites of that habitat type highlighted/ selected and a short ~2-sentence summary blurb of what that habitat type refers to.",
-                               plotOutput(outputId = "habitat_plot")
+                     mainPanel("Output: image and description of habitat",
+                               plotOutput(outputId = "habitat_image")
                                ) #end of main panel
                  ) #end of sidebar layout
                  ) #end of fluid page
@@ -51,14 +52,16 @@ ui <- fluidPage(
                           p("Insert blurb on productivity of the plants under the various treatments"),
                           sidebarLayout(
                             sidebarPanel(
-                              checkboxGroupInput(inputId = "water",
-                                                 label = "Water treatment",
-                                                 choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH")),
-                              checkboxGroupInput(inputId = "cage",
-                                                 label = "Cage treatment",
-                                                 choices = c(1, 0))
+                              checkboxGroupInput(inputId = "treatment_name",
+                                                 label = "Select Plant water treatment",
+                                                 unique(df_final$treatment_name))
+                                                 #choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH"))#,
+                              # checkboxGroupInput(inputId = "cage",
+                              #                    label = "Cage treatment",
+                              #                    choices = c(1, 0))
                           ), # end sidebar panel
-                          mainPanel("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions")
+                          mainPanel(#p("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions"),
+                                    plotOutput(outputId = "plant_treatment_plot"))
                  ) #end of sidebar layout
                  ) #end of fluidpage
                  ), #end of tab 2
@@ -110,21 +113,42 @@ server <-function(input, output, session){
   #   )
   #
   # })
-  #
-  # # widget_treatment_type data
-  # treatment_select <- reactive({
-  #   df_final %>%
-  #     filter(treatment_id == input$treatment_id)
+
+  ### widget1_habitat_type
+  # habitat_select <- reactive({
+  #      df_final %>%
+  #        filter(habitat_type == input$habitat_type)
   # })
   #
-  # #widget_treatment_type plot
-  # output$treatment_plot <- renderPlot({
-  #   ggplot(data = treatment_select(),
-  #          aes(x = treatment_id,
-  #              y = plant_dry_mass)) +
-  #     geom_boxplot()
-  #
+  # output$habitat_image <- renderPlot({
+  #   ggdraw () +
+  #     draw_image("https://images.unsplash.com/photo-1470164971321-eb5ac2c35f2e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80")
   # })
+
+
+
+  #
+  # widget2_plant_treatment_type data
+  treatment_select <- reactive({
+    df_final %>%
+      filter(treatment_name == input$treatment_name) %>%
+      drop_na(plant_dry_mass) %>%
+      summarise(mean(plant_dry_mass)) %>%
+      rename('avg_plant_mass' = 3)
+  })
+
+  #widget2_plant_treatment_type plot
+  output$plant_treatment_plot <- renderPlot({
+    ggplot(data = treatment_select(),
+           aes(x = treatment_name,
+               y = plant_dry_mass)) +
+      geom_boxplot() +
+      labs(x = "water + cage treatment",
+           y = "plant dry mass",
+           title = "Brittlebush Growth Resulting from Different Treatments") +
+      theme_minimal()
+
+  })
 
    # widget3_arthropod_treatment_id data
    arth_treatment_select <- reactive({
