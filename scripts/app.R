@@ -49,12 +49,20 @@ ui <- fluidPage(
 
                  tabPanel("Brittlebush",
                  fluidPage(titlePanel("Brittlebush Productivity Under Varying Conditions"),
-                          p("Insert blurb on productivity of the plants under the various treatments"),
+                          p("Insert blurb on productivity of the plants under the various treatments.
+                            Note: this widget is based on treatment_id instead of treatment_name because
+                            otherwise it conflicts with the other widget."),
                           sidebarLayout(
                             sidebarPanel(
-                              radioButtons(inputId = "treatment_name",
-                                                 label = "Select Plant water treatment",
-                                                 unique(df_final$treatment_name))
+                              radioButtons(inputId = "treatment_id",
+                                                 label = "Select Plant treatment",
+                                                 choices = c("Low water (cage)" = "R",
+                                                             "Low water (no cage)" = "O",
+                                                             "Medium water (cage)" = "B",
+                                                             "Medium water (no cage)" = "G",
+                                                             "High water (cage)" = "Y",
+                                                             "High water (no cage)" = "P"))
+                                           #unique(df_final$treatment_name))
                                                  #choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH"))#,
                                     ), # end sidebar panel
                           mainPanel(#p("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions"),
@@ -149,9 +157,9 @@ server <-function(input, output, session){
 
 
   # widget2_plant_treatment_type data
-  treatment_select <- reactive({
+  plant_treatment_select <- reactive({
     df_final %>%
-      filter(treatment_name == input$treatment_name) %>%
+      filter(treatment_id == input$treatment_id) %>%
       drop_na(plant_dry_mass) #%>%
       #group_by(treatment_name) %>%
       #summarize(mean(plant_dry_mass)) #%>%
@@ -160,13 +168,12 @@ server <-function(input, output, session){
 
   #widget2_plant_treatment_type plot
   output$plant_treatment_plot <- renderPlot({
-    ggplot(data = treatment_select(),
-           aes(x = treatment_name,
-               y = plant_dry_mass)) +
-      geom_boxplot() +
+    ggplot(data = plant_treatment_select()) +
+      geom_boxplot(aes(x = treatment_id,
+                       y = plant_dry_mass)) +
       labs(x = "water + cage treatment",
            y = "plant dry mass",
-           title = "Brittlebush Growth Resulting from Different Treatments") +
+           title = "Brittlebush Growth Resulting from Treatments") +
       theme_minimal()
 
   })
