@@ -36,7 +36,8 @@ df_2008 <- plants_2008 %>% inner_join(arthropods_2008,
                                       by=c('plant_id','treatment_id','month', 'habitat_type','site_id','site_number','name'))
 df_2008 <- df_2008 %>%
   mutate(year = 2008,
-         date = format(lubridate::mdy(paste0(month,"01", year)), "%m-%d-%Y")) #%>%
+         year = ifelse(month == "December", "2007", year),
+         date = format(lubridate::ymd(paste0(year, month,"01")), "%Y-%m-%d")) #%>%
 
 #colnames(df_2007)
 # print(cols_ls)

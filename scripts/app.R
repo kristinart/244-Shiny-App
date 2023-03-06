@@ -7,6 +7,7 @@ library(here)
 library(shinythemes)
 library(bslib)
 library(cowplot)
+library(wesanderson)
 
 df_final <- read_csv(here('data','df_final.csv'))
 
@@ -54,14 +55,15 @@ ui <- fluidPage(
                             otherwise it conflicts with the other widget."),
                           sidebarLayout(
                             sidebarPanel(
-                              radioButtons(inputId = "treatment_id",
-                                                 label = "Select Plant treatment",
-                                                 choices = c("Low water (cage)" = "R",
-                                                             "Low water (no cage)" = "O",
-                                                             "Medium water (cage)" = "B",
-                                                             "Medium water (no cage)" = "G",
-                                                             "High water (cage)" = "Y",
-                                                             "High water (no cage)" = "P"))
+                              radioButtons(inputId = "treatment_name_plant",
+                                           label = "Select Cluster Treatment",
+                                           choices = unique(df_final$treatment_name))
+                                                 # choices = c("Low water (cage)" = "R",
+                                                 #             "Low water (no cage)" = "O",
+                                                 #             "Medium water (cage)" = "B",
+                                                 #             "Medium water (no cage)" = "G",
+                                                 #             "High water (cage)" = "Y",
+                                                 #             "High water (no cage)" = "P"))
                                            #unique(df_final$treatment_name))
                                                  #choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH"))#,
                                     ), # end sidebar panel
@@ -75,8 +77,7 @@ ui <- fluidPage(
                           fluidPage(
                             titlePanel("Arthropod Abundance on Brittlebush Grown Under Varying Conditions"),
                             p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions.
-                              Planning to clean up and pretty both plots. For top plot, planning to remove 12-1-2008 (or check if
-                              that was actually 12-2007?? I think it might be because this data is such a mess). For bottom plot, hoping
+                              Planning to clean up and pretty both plots. For bottom plot, hoping
                               to get a second y-axis to display plant dry mass too; since they are of such different magnitudes,
                               it doesn't look good to have them plotted on the same axis. Also hoping to get the slider widget and
                               x-axis of the plot to have month names (Jan Feb Mar, etc) as the tick labels. Lastly, open to displaying
@@ -88,13 +89,14 @@ ui <- fluidPage(
                                             "Select cluster treatment",
                                             choices = unique(df_final$treatment_name)),
                                 sliderInput(inputId = "date_slider",
-                                            label = "Select month range",
+                                            label = "Select Month Range",
                                             min = 1,
                                             max = 6,
                                             value = c(1,6),
                                             step = 1)
                               ), #end of sidebar panel
                               mainPanel(plotOutput(outputId = "arth_treatment_plot"),
+                                        plotOutput(outputId = "date_plot2"),
                                         plotOutput(outputId = "date_plot"))
                               ) #end of sidebar layout
                             ) #end of fluidpage
@@ -159,7 +161,7 @@ server <-function(input, output, session){
   # widget2_plant_treatment_type data
   plant_treatment_select <- reactive({
     df_final %>%
-      filter(treatment_id == input$treatment_id) %>%
+      filter(treatment_name == input$treatment_name_plant) %>%
       drop_na(plant_dry_mass) #%>%
       #group_by(treatment_name) %>%
       #summarize(mean(plant_dry_mass)) #%>%
@@ -202,33 +204,49 @@ server <-function(input, output, session){
    #widget3_arthropod_treatment_id plot
    output$arth_treatment_plot <- renderPlot({
      ggplot(data = arth_treatment_select(), aes(x = date, y = total_arth, colour = habitat_type)) +
-       geom_line(aes(colour = habitat_type, group = habitat_type)) +
+       geom_line(aes(colour = habitat_type, group = habitat_type), size = 3) +
        #geom_boxplot(aes(colour = habitat_type, group = habitat_type)) +
-       geom_point(size = 1.5)+
+       #geom_point(size = 2)+
        labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = paste0('Total arthropod count by month on brittlebush plants treated with ','treatment_title'))+
-       theme_minimal()
+       scale_color_manual(values= wes_palette("GrandBudapest1", n = 3))+
+       theme_minimal()+
+       theme(axis.text.x=element_text(angle=45,hjust=1, size = 10))
 
    })
 
-   # # widget4_arthropod_abundance_date data
+   #widget4_arthropod_abundance_date data
    date_select <- reactive({
      df_final %>%
        select(month_number,plant_dry_mass, indiv_count) %>%
        group_by(month_number) %>%
        summarise(across(indiv_count, ~ mean(.x, na.rm = TRUE)))
    })
-
    #widget4_arthropod_abundance_date plot
    output$date_plot <- renderPlot({
      date_select() %>%
        ggplot()+
-       geom_line(aes(x = month_number, y = indiv_count))+
+       geom_line(aes(x = month_number, y = indiv_count), color = "#5B1A18", size = 2)+
        coord_cartesian(xlim=input$date_slider)+
        labs(x = "Month Number", y = "Average arthropod count per plant")+
        theme_minimal()
 
    })
-
+   #widget5_plant_biomass_date data
+   date_select2 <- reactive({
+     df_final %>%
+       select(month_number,plant_dry_mass, indiv_count) %>%
+       group_by(month_number, plant_dry_mass, indiv_count)
+})
+   #widget5_plant_biomass_date plot
+   output$date_plot2 <- renderPlot({
+     date_select2() %>%
+       ggplot()+
+       geom_boxplot(aes(x = month_number, y = plant_dry_mass, group = month_number, fill = factor(month_number)))+
+       coord_cartesian(xlim=input$date_slider)+
+       scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
+       labs(x = "Month Number", y = "Plant Biomass ()", fill = "Month Number")+
+       theme_minimal()
+   })
 }
 
 
