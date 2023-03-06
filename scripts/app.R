@@ -86,7 +86,7 @@ ui <- fluidPage(
                             sidebarLayout(
                               sidebarPanel(
                                 selectInput("treatment_name",
-                                            "Select cluster treatment",
+                                            "Select Cluster Treatment",
                                             choices = unique(df_final$treatment_name)),
                                 sliderInput(inputId = "date_slider",
                                             label = "Select Month Range",
@@ -94,10 +94,12 @@ ui <- fluidPage(
                                             max = 6,
                                             value = c(1,6),
                                             step = 1)
-                              ), #end of sidebar panel
-                              mainPanel(plotOutput(outputId = "arth_treatment_plot"),
-                                        plotOutput(outputId = "date_plot2"),
-                                        plotOutput(outputId = "date_plot"))
+                                ), #end of sidebar panel
+                              mainPanel(fluidRow(
+                                splitLayout(cellWidths = c("50%", "50%"),
+                                plotOutput(outputId = "arth_treatment_plot"),
+                                plotOutput(outputId = "date_plot")))
+                              ) # end of main panel
                               ) #end of sidebar layout
                             ) #end of fluidpage
                  ) #end of tab 3
@@ -217,36 +219,41 @@ server <-function(input, output, session){
    #widget4_arthropod_abundance_date data
    date_select <- reactive({
      df_final %>%
-       select(month_number,plant_dry_mass, indiv_count) %>%
-       group_by(month_number) %>%
-       summarise(across(indiv_count, ~ mean(.x, na.rm = TRUE)))
+       select(month,month_number, plant_dry_mass, indiv_count) %>%
+       group_by(month, month_number) %>%
+       summarise(across(c(indiv_count, plant_dry_mass), ~ mean(.x, na.rm = TRUE))) %>%
+       arrange(month_number)
    })
    #widget4_arthropod_abundance_date plot
    output$date_plot <- renderPlot({
      date_select() %>%
        ggplot()+
-       geom_line(aes(x = month_number, y = indiv_count), color = "#5B1A18", size = 2)+
+       geom_col(aes(x=month_number, y=plant_dry_mass, fill = factor(month_number)), alpha = 0.6)+
+       geom_line(aes(x=month_number, y=100*indiv_count),color="black",size=2)+
+       scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
        coord_cartesian(xlim=input$date_slider)+
-       labs(x = "Month Number", y = "Average arthropod count per plant")+
-       theme_minimal()
+       labs(x="Month Number",y="Plant Biomass ()", fill = "Month Number")+
+       scale_y_continuous(sec.axis=sec_axis(~.*0.01,name="Arthropods per plant"))+
+       theme_minimal()+
+       theme(legend.position = "none")
 
    })
-   #widget5_plant_biomass_date data
-   date_select2 <- reactive({
-     df_final %>%
-       select(month_number,plant_dry_mass, indiv_count) %>%
-       group_by(month_number, plant_dry_mass, indiv_count)
-})
-   #widget5_plant_biomass_date plot
-   output$date_plot2 <- renderPlot({
-     date_select2() %>%
-       ggplot()+
-       geom_boxplot(aes(x = month_number, y = plant_dry_mass, group = month_number, fill = factor(month_number)))+
-       coord_cartesian(xlim=input$date_slider)+
-       scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
-       labs(x = "Month Number", y = "Plant Biomass ()", fill = "Month Number")+
-       theme_minimal()
-   })
+#    #widget5_plant_biomass_date data
+#    date_select2 <- reactive({
+#      df_final %>%
+#        select(month_number,plant_dry_mass, indiv_count) %>%
+#        group_by(month_number, plant_dry_mass, indiv_count)
+# })
+#    #widget5_plant_biomass_date plot
+#    output$date_plot2 <- renderPlot({
+#      date_select2() %>%
+#        ggplot()+
+#        geom_boxplot(aes(x = month_number, y = plant_dry_mass, group = month_number, fill = factor(month_number)))+
+#        coord_cartesian(xlim=input$date_slider)+
+#        scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
+#        labs(x = "Month Number", y = "Plant Biomass ()", fill = "Month Number")+
+#        theme_minimal()
+#    })
 }
 
 
