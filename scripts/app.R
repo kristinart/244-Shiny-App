@@ -15,7 +15,7 @@ ui <- fluidPage(
   theme = bs_theme(
     version = 5,
     bootswatch = NULL,
-    bg = "white",
+    bg = "antiquewhite",
     fg = "black",
     primary = "purple",
     secondary = "turquoise",
@@ -55,9 +55,10 @@ ui <- fluidPage(
                             otherwise it conflicts with the other widget."),
                           sidebarLayout(
                             sidebarPanel(
-                              radioButtons(inputId = "treatment_name_plant",
+                              checkboxGroupInput(inputId = "treatment_name_plant",
                                            label = "Select Cluster Treatment",
-                                           choices = unique(df_final$treatment_name))
+                                           choices = unique(df_final$treatment_name),
+                                           selected = c(df_final$treatment_name[1], 'medium water + cage'))
                                                  # choices = c("Low water (cage)" = "R",
                                                  #             "Low water (no cage)" = "O",
                                                  #             "Medium water (cage)" = "B",
@@ -85,9 +86,10 @@ ui <- fluidPage(
                               calculate that with the unclear labels in this dataset..."),
                             sidebarLayout(
                               sidebarPanel(
-                                selectInput("treatment_name",
+                                radioButtons("treatment_name",
                                             "Select Cluster Treatment",
-                                            choices = unique(df_final$treatment_name)),
+                                            choices = unique(df_final$treatment_name),
+                                            selected = df_final$treatment_name[1]),
                                 sliderInput(inputId = "date_slider",
                                             label = "Select Month Range",
                                             min = 1,
@@ -155,7 +157,7 @@ server <-function(input, output, session){
            y = "number of observations",
            title = "Number of Observations by Site Name and Habitat Type") +
       theme_minimal()
-  })
+  },bg = 'transparent')
 ########change these to fill colors, and match theme
 
 
@@ -172,15 +174,21 @@ server <-function(input, output, session){
 
   #widget2_plant_treatment_type plot
   output$plant_treatment_plot <- renderPlot({
-    ggplot(data = plant_treatment_select()) +
-      geom_boxplot(aes(x = treatment_id,
-                       y = plant_dry_mass)) +
-      labs(x = "water + cage treatment",
-           y = "plant dry mass",
+    ggplot(data = plant_treatment_select(), aes(x = treatment_name,
+                                                y = plant_dry_mass,
+                                                group = treatment_name,
+                                                fill = treatment_name)) +
+      #geom_boxplot(outlier.shape = NA) +
+      #geom_jitter()+
+      geom_violin(trim=FALSE)+
+      scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
+      labs(x = "Cluster Treatment",
+           y = "Plant Dry Mass ()",
+           fill = 'Treatment Type',
            title = "Brittlebush Growth Resulting from Treatments") +
       theme_minimal()
 
-  })
+  },bg = 'transparent')
 
    # widget3_arthropod_treatment_id data
    arth_treatment_select <- reactive({
@@ -214,7 +222,7 @@ server <-function(input, output, session){
        theme_minimal()+
        theme(axis.text.x=element_text(angle=45,hjust=1, size = 10))
 
-   })
+   },bg = 'transparent')
 
    #widget4_arthropod_abundance_date data
    date_select <- reactive({
@@ -237,7 +245,7 @@ server <-function(input, output, session){
        theme_minimal()+
        theme(legend.position = "none")
 
-   })
+   },bg = 'transparent')
 #    #widget5_plant_biomass_date data
 #    date_select2 <- reactive({
 #      df_final %>%
