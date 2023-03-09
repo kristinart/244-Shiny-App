@@ -1,0 +1,185 @@
+---
+title: "Untitled"
+author: "K.H.Art"
+date: "2023-02-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(shinythemes)
+library(bslib)
+```
+
+
+```{r setup, include=FALSE}
+df_final <- read_csv(here('data','df_final.csv'))
+```
+
+```{r}
+#widget 4/5 revamped
+newdf2 %>% 
+  ggplot() + 
+  geom_col(aes(x=month_number, y=plant_dry_mass), fill = 'grey70')+
+  geom_line(aes(x=month_number, y=100*indiv_count),color="#5B1A18",size=2)+
+  labs(x="Month Number",y="Plant Biomass ()")+
+  scale_y_continuous(sec.axis=sec_axis(~.*0.01,name="Arthropods per plant"))
+
+```
+
+```{r}
+#widget 5
+newdf <- df_final %>% 
+  select(month_number,plant_dry_mass, indiv_count) %>%
+  group_by(month_number, plant_dry_mass, indiv_count) #%>%
+  #summarise(across(c(indiv_count, plant_dry_mass), ~ mean(.x, na.rm = TRUE)))# %>% 
+  # group_by(month_number) %>%
+  # summarise(plant_dry_mass, ~mean(.x, na,.rm = TRUE))
+
+newdf %>% 
+  ggplot()+
+  geom_boxplot(aes(x = month_number, y = plant_dry_mass, group = month_number, fill = factor(month_number)))+
+  #geom_boxplot(aes(x = month_number, y = indiv_count, group = month_number))+
+  #geom_line(aes(x = month_number, y = plant_dry_mass))+
+  #geom_line(aes(x = month_number, y = indiv_count))+
+  coord_cartesian(xlim=c(1,5))+
+  scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
+  labs(x = "Month", y = "Plant Biomass ()", fill = "Month")+
+  theme_minimal()
+```
+
+
+```{r}
+#widget 4
+newdf2 <- df_final %>% 
+  select(month,month_number, plant_dry_mass, indiv_count) %>%
+  group_by(month, month_number) %>%
+  summarise(across(c(indiv_count, plant_dry_mass), ~ mean(.x, na.rm = TRUE))) %>% 
+  arrange(month_number)
+  #group_by(month_number) %>%
+  #summarise(plant_dry_mass, ~mean(.x, na,.rm = TRUE))
+
+newdf2 %>% 
+  ggplot(aes(x = month_number, y = indiv_count))+
+  geom_line(aes(x = month_number, y = indiv_count))+
+  coord_cartesian(xlim=c(1,5))+
+  labs(x = "Month Number", y = "Average arthropod count per plant")+
+  theme_minimal()
+
+
+```
+
+
+```{r}
+ggplot(df_final, aes(x = month_number, y = plant_dry_mass, fill = month_number))+
+  geom_line()
+```
+
+
+```{r setup, include=FALSE}
+arth_counts <- df_final %>% 
+  #filter(treatment_name == input$treatment_name) %>% 
+  filter(treatment_name == 'high water + cage') %>% 
+  drop_na(indiv_count) %>% 
+  group_by(date,  habitat_type) %>% #site_id,
+  summarise(sum(indiv_count)) %>% 
+  rename('total_arth' = 3) %>% 
+  arrange(date)
+
+treatment_title = df_final$treatment_name = 'high water + cage'
+#treatment_title = df_final$treatment_name = input$treatment_name
+
+# new <- df_final %>%
+#   filter(treatment_name == 'High water + cage') %>%
+#   select(treatment_name)
+
+
+# arths <- df_final %>% 
+#   filter(treatment_id == 'R') %>% 
+#   drop_na(indiv_count) %>% 
+#   group_by(date,  habitat_type) %>% #site_id,
+#   summarise(sum(indiv_count)) %>% 
+#   rename('total_arth' = 3) %>% 
+#   group_by(date, habitat_type) %>% 
+#   summarize(sum(total_arth)) %>% 
+#   rename('total_arth' = 2) %>% 
+#   arrange(date)
+
+# 
+#   count(indiv_count > 0)%>% 
+#   group_by(date, habitat_type, treatment_id) %>% 
+#   summarise(sum(n)) %>% 
+#   rename('total_arth' = 4) 
+
+# arths_remnant <- arths %>% 
+#   filter(habitat_type == 'Remnant')
+```
+
+
+```{r setup, include=FALSE}
+#widget 3
+
+# plot <- ggplot(data = arth_counts,aes(x = date, y = total_arth, colour = habitat_type)) +
+#   geom_line(aes(colour = habitat_type, group = habitat_type)) +
+#   geom_point(size = 1.5)+
+#   labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = paste0('Total arthropod count by month on brittlebush plants treated with ',treatment_title))+
+#   theme_minimal()
+#   
+# plot
+
+plot <- ggplot(data = arth_counts,aes(x = date, y = total_arth, colour = habitat_type)) +
+       geom_line(aes(colour = habitat_type, group = habitat_type), size = 2) +
+       #geom_boxplot(aes(colour = habitat_type, group = habitat_type)) +
+       #geom_point(size = 2)+
+       labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = paste0('Total arthropod count by month on brittlebush plants treated with ','treatment_title'))+
+       scale_color_manual(values= wes_palette("GrandBudapest1", n = 3))+
+       theme_minimal()+
+       theme(axis.text.x=element_text(angle=45,hjust=1, size = 10))
+
+plot
+```
+
+
+```{r setup, include=FALSE}
+# widget3_arthropod_treatment_id data
+   arth_treatment_select <- reactive({
+     df_final %>%
+       filter(treatment_id == input$treatment_id) %>% 
+       group_by(date, site_id, plant_id, treatment_id, habitat_type) %>% 
+       count(indiv_count > 0)%>% 
+       group_by(date, site_id, habitat_type, treatment_id) %>% 
+       summarise(sum(n)) 
+       
+       
+   })
+
+   #widget3_arthropod_treatment_id plot
+   output$treatment_plot <- renderPlot({
+     ggplot(data = arth_treatment_select(),
+            aes(x = treatment_id,
+                y = plant_dry_mass)) +
+       geom_boxplot()
+     
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
