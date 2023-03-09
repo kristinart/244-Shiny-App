@@ -8,8 +8,25 @@ library(shinythemes)
 library(bslib)
 library(cowplot)
 library(wesanderson)
+library(plotly)
+library(sf)
+library(janitor)
 
 df_final <- read_csv(here('data','df_final.csv'))
+#Load and wrangle spatial data
+locations <- read_csv(here('data','site_locations.csv')) %>%
+  drop_na()
+
+locations_sf = st_as_sf(locations, coords = c("long", "lat"),
+                        crs = 4326) %>%
+  mutate(text = paste0("Site Name: ", name, "\n", "Habitat Type: ", habitat_type))
+
+arizona_sf <- read_sf(here('data/tl_2020_04_county10/tl_2020_04_county10.shp')) %>%
+  clean_names()
+
+maricopa_sf <- arizona_sf %>%
+  filter(name10 == 'Maricopa')
+
 
 ui <- fluidPage(
   theme = bs_theme(
@@ -32,17 +49,18 @@ ui <- fluidPage(
                  tabPanel(title = "Background",
                  fluidPage(
                    titlePanel("Introduction and Background"),
-                   img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
+                   #img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
                    p("This study examined the species abundance, richness, and evenness of arthropods, and the plant productivity of brittlebush, in response to different habitats and treatment conditions. The purpose of the study was to better understand any potential impact of different habitat types and growing conditions on urban biodiversity."),
                    sidebarLayout(
                      sidebarPanel(
-                       (checkboxGroupInput(inputId = "habitat_type",
-                                     label = "Choose habitat type",
-                                     choices = c("Desert", "Remnant", "Urban"))
-                       ) #end of checkboxGroup
+                       # (checkboxGroupInput(inputId = "habitat_type",
+                       #               label = "Choose habitat type",
+                       #               choices = c("Desert", "Remnant", "Urban"))
+                       # ) #end of checkboxGroup
                      ), #end of sidebar panel
                      mainPanel(#p("Output: habitat bar plot"),
-                               plotOutput(outputId = "habitat_plot")
+                               #plotOutput(outputId = "habitat_plot"),
+                               plotlyOutput(outputId = "map_plot")
                                ) #end of main panel
                  ) #end of sidebar layout
                  ) #end of fluid page
@@ -109,6 +127,18 @@ ui <- fluidPage(
 )
 
 server <-function(input, output, session){
+
+
+  output$map_plot <- renderPlotly({
+    ggplot()+
+      geom_sf(data = maricopa_sf, color = 'black', fill = "#F1BB7B") +
+      geom_sf(data = locations_sf, size = 2, shape = 17, aes(text = text, color = habitat_type))+
+      scale_color_manual(values= c("#FD6467", "#5B1A18", "#A2A475"))+
+      labs(color = "Habitat Type")+
+      theme_minimal()
+
+  })
+
   # #widget_habitat_type data
   # habitat_select <- reactive({
   #   df_final %>%
@@ -246,6 +276,11 @@ server <-function(input, output, session){
        theme(legend.position = "none")
 
    },bg = 'transparent')
+#use renderPlotly for interactive map with zoom etc!!!
+   #in server, output$arth_treatment_plot <- renderPlotly({})
+   #in ui, plotlyOutput(outputId = "habitat_plot")
+
+
 #    #widget5_plant_biomass_date data
 #    date_select2 <- reactive({
 #      df_final %>%

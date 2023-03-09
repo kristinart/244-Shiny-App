@@ -1,0 +1,10 @@
+site_id,site_number,name,lat,long,habitat_type
+CS,6,Community Services Building,33.44087896,-111.9405795,Remnant
+SG,1,Stan's Compound Garden,NA,NA,Urban
+EX,3,Excelencia School,33.46568389,-112.0354063,Urban
+DB,4,Desert Botanical Garden,33.46197494,-111.944678,Remnant
+SM,5,South Mountain,33.34149232,-112.0589832,Remnant
+UP,7,Usery Mountain Preserve,33.47922112,-111.6195031,Desert
+ES,8,Estrella Mountain Regional Park,33.33148337,-112.3515717,Desert
+WT,9,White Tank Mountain Regional Park,33.59030159,-112.5422035,Desert
+ME,10,Meyer Elementary,33.4019217,-111.9150784,Urban

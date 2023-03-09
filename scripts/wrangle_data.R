@@ -7,9 +7,30 @@ library(shinythemes)
 library(bslib)
 library(lubridate)
 library(tsibble)
+library(sf)
+library(tmap)
+library(janitor)
+
+#Load and wrangle spatial data
+locations <- read_csv(here('data','site_locations.csv')) %>%
+  drop_na()
+locations_sf = st_as_sf(locations, coords = c("long", "lat"),
+                 crs = 4326)
+plot(locations_sf$geometry)
+
+arizona_sf <- read_sf(here('data/tl_2020_04_county10/tl_2020_04_county10.shp')) %>%
+  clean_names()
+
+maricopa_sf <- arizona_sf %>%
+  filter(name10 == 'Maricopa')
+
+#quick visualization of both sf data
+ggplot()+
+  geom_sf(data = maricopa_sf) +
+  geom_sf(data = locations_sf, size = 1, color = 'coral')
 
 
-#Load and wrangle data
+#Load and wrangle plant/ arthropod data
 #plants_2007 <- read_csv(here("data","571_biomass_2007.csv"))
 plants_2008 <- read_csv(here("data","571_biomass_2008.csv"))
 #arthropods_2007 <- read_csv(here("data","571_arthropods_2007.csv"))
