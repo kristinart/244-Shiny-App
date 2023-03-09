@@ -13,7 +13,18 @@ library(sf)
 library(janitor)
 
 df_final <- read_csv(here('data','df_final.csv'))
-#Load and wrangle spatial data
+
+### arrange data in order of treatment_name
+# df_final %>%
+#   arrange(treatment_name) %>%
+#   as.factor(treatment_name)
+#
+# df_final %>%
+#   mutate(treatment_name = factor(treatment_name, levels = target_cc)) %>%
+#   arrange(treatment_name)
+
+
+### Load and wrangle spatial data
 locations <- read_csv(here('data','site_locations.csv')) %>%
   drop_na()
 
@@ -58,6 +69,7 @@ ui <- fluidPage(
                             #      height = '100px',
                             #      width = '100px'
                             #), # end fluidPage
+                    img(src = "brittlebush_iNaturalist_76846174_SimonTonge.jpg"),
                    sidebarLayout(
                      sidebarPanel(
                                ), #end of sidebar panel
