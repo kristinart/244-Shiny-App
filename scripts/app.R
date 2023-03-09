@@ -17,7 +17,7 @@ df_final <- read_csv(here('data','df_final.csv'))
 locations <- read_csv(here('data','site_locations.csv')) %>%
   drop_na()
 
-locations_sf = st_as_sf(locations, coords = c("long", "lat"),
+locations_sf <- st_as_sf(locations, coords = c("long", "lat"),
                         crs = 4326) %>%
   mutate(text = paste0("Site Name: ", name, "\n", "Habitat Type: ", habitat_type))
 
