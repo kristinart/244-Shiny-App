@@ -16,6 +16,10 @@ library(bslib)
 
 ```{r setup, include=FALSE}
 df_final <- read_csv(here('data','df_final.csv'))
+#photo file names assigned
+#make vector of image names
+# name file path to that image. reactive function pulls 
+#or render image
 ```
 
 ```{r}
