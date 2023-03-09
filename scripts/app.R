@@ -49,8 +49,15 @@ ui <- fluidPage(
                  tabPanel(title = "Background",
                  fluidPage(
                    titlePanel("Introduction and Background"),
-                   #img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
-                   p("This study examined the species abundance, richness, and evenness of arthropods, and the plant productivity of brittlebush, in response to different habitats and treatment conditions. The purpose of the study was to better understand any potential impact of different habitat types and growing conditions on urban biodiversity."),
+                 #  img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
+                     p("This study examined the species abundance, richness, and evenness of arthropods, and the plant productivity of brittlebush, in response to different habitats and treatment conditions.
+                     The purpose of the study was to better understand any potential impact of different habitat types and growing conditions on urban biodiversity."),
+                   #img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg",
+                       #here("photos", "brittlebush_iNaturalist_76846174_SimonTonge.jpg",
+                             #     align = 'center',
+                            #      height = '100px',
+                            #      width = '100px'
+                            #), # end fluidPage
                    sidebarLayout(
                      sidebarPanel(
                        # (checkboxGroupInput(inputId = "habitat_type",
@@ -69,8 +76,7 @@ ui <- fluidPage(
                  tabPanel("Brittlebush",
                  fluidPage(titlePanel("Brittlebush Productivity Under Varying Conditions"),
                           p("Insert blurb on productivity of the plants under the various treatments.
-                            Note: this widget is based on treatment_id instead of treatment_name because
-                            otherwise it conflicts with the other widget."),
+                            Notes: this widget is based on treatment_name."),
                           sidebarLayout(
                             sidebarPanel(
                               checkboxGroupInput(inputId = "treatment_name_plant",
