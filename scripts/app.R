@@ -60,14 +60,8 @@ ui <- fluidPage(
                             #), # end fluidPage
                    sidebarLayout(
                      sidebarPanel(
-                       # (checkboxGroupInput(inputId = "habitat_type",
-                       #               label = "Choose habitat type",
-                       #               choices = c("Desert", "Remnant", "Urban"))
-                       # ) #end of checkboxGroup
-                     ), #end of sidebar panel
-                     mainPanel(#p("Output: habitat bar plot"),
-                               #plotOutput(outputId = "habitat_plot"),
-                               plotlyOutput(outputId = "map_plot")
+                               ), #end of sidebar panel
+                     mainPanel(plotlyOutput(outputId = "map_plot")
                                ) #end of main panel
                  ) #end of sidebar layout
                  ) #end of fluid page
@@ -83,16 +77,8 @@ ui <- fluidPage(
                                            label = "Select Cluster Treatment",
                                            choices = unique(df_final$treatment_name),
                                            selected = c(df_final$treatment_name[1], 'medium water + cage'))
-                                                 # choices = c("Low water (cage)" = "R",
-                                                 #             "Low water (no cage)" = "O",
-                                                 #             "Medium water (cage)" = "B",
-                                                 #             "Medium water (no cage)" = "G",
-                                                 #             "High water (cage)" = "Y",
-                                                 #             "High water (no cage)" = "P"))
-                                           #unique(df_final$treatment_name))
-                                                 #choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH"))#,
-                                    ), # end sidebar panel
-                          mainPanel(#p("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions"),
+                                                 ), # end sidebar panel
+                          mainPanel(p("output: violin plot of plant productivity under the chosen combination of treatment conditions"),
                                     plotOutput(outputId = "plant_treatment_plot"))
                  ) #end of sidebar layout
                  ) #end of fluidpage
@@ -102,12 +88,7 @@ ui <- fluidPage(
                           fluidPage(
                             titlePanel("Arthropod Abundance on Brittlebush Grown Under Varying Conditions"),
                             p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions.
-                              Planning to clean up and pretty both plots. For bottom plot, hoping
-                              to get a second y-axis to display plant dry mass too; since they are of such different magnitudes,
-                              it doesn't look good to have them plotted on the same axis. Also hoping to get the slider widget and
-                              x-axis of the plot to have month names (Jan Feb Mar, etc) as the tick labels. Lastly, open to displaying
-                              something else on this tab...we originally talked about species richness but idrk if I want to try to
-                              calculate that with the unclear labels in this dataset..."),
+                              Planning to clean up and pretty both plots."),
                             sidebarLayout(
                               sidebarPanel(
                                 radioButtons("treatment_name",
@@ -134,7 +115,7 @@ ui <- fluidPage(
 
 server <-function(input, output, session){
 
-
+### Map Plot - Sites by Habitat Type with Info (Intro page)
   output$map_plot <- renderPlotly({
     ggplot()+
       geom_sf(data = maricopa_sf, color = 'black', fill = "#F1BB7B") +
@@ -145,21 +126,7 @@ server <-function(input, output, session){
 
   })
 
-  # #widget_habitat_type data
-  # habitat_select <- reactive({
-  #   df_final %>%
-  #     filter(habitat_type == input$habitat_type)
-  # })
-  #
-  # #widget_habitat_type plot
-  # output$habitat_plot <- renderPlot({
-  #   ggplot(data = habitat_select(),
-  #          aes(x = habitat_type,
-  #              y = plant_dry_mass) +
-  #            geom_point()
-  #   )
-  #
-  # })
+
 
   ### widget1_habitat_type
   # habitat_select <- reactive({
@@ -172,29 +139,29 @@ server <-function(input, output, session){
   #     draw_image("https://images.unsplash.com/photo-1470164971321-eb5ac2c35f2e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80")
   # })
 
-  #widget1_habitat_type data
-  habitat_select <- reactive({
-    df_final %>%
-      filter(habitat_type %in% input$habitat_type) %>%
-      group_by(name, habitat_type) %>%
-      summarize(num_of_obs = n())
-  })
-  ############Check this because I think I might have the wrong data count
+  # #widget1_habitat_type data
+  # habitat_select <- reactive({
+  #   df_final %>%
+  #     filter(habitat_type %in% input$habitat_type) %>%
+  #     group_by(name, habitat_type) %>%
+  #     summarize(num_of_obs = n())
+  # })
+  # ############Check this because I think I might have the wrong data count
 
-  # widget1_habitat_type plot
-  output$habitat_plot <- renderPlot({
-    ggplot(data = habitat_select()) +
-      geom_col(aes(x = name,
-                   y = num_of_obs,
-                   color = habitat_type
-      )) +
-      scale_color_manual(values = c("black", "coral", "turquoise")) +
-      labs(x = "site name",
-           y = "number of observations",
-           title = "Number of Observations by Site Name and Habitat Type") +
-      theme_minimal()
-  },bg = 'transparent')
-########change these to fill colors, and match theme
+#   # widget1_habitat_type plot
+#   output$habitat_plot <- renderPlot({
+#     ggplot(data = habitat_select()) +
+#       geom_col(aes(x = name,
+#                    y = num_of_obs,
+#                    color = habitat_type
+#       )) +
+#       scale_color_manual(values = c("black", "coral", "turquoise")) +
+#       labs(x = "site name",
+#            y = "number of observations",
+#            title = "Number of Observations by Site Name and Habitat Type") +
+#       theme_minimal()
+#   },bg = 'transparent')
+# ########change these to fill colors, and match theme
 
 
 
@@ -237,10 +204,7 @@ server <-function(input, output, session){
        rename('total_arth' = 3) %>%
        arrange(date)
      })
-     #treatment_title = df_final$treatment_name = 'high water + cage'
-     # arth_treatment_select <- reactive({
-     #   treatment_title = df_final$treatment_name == input$treatment_name
-     #   })
+
    treatment_title <- reactive({
      df_final %>%
        filter(treatment_name == input$treatment_name) %>%
@@ -251,8 +215,6 @@ server <-function(input, output, session){
    output$arth_treatment_plot <- renderPlot({
      ggplot(data = arth_treatment_select(), aes(x = date, y = total_arth, colour = habitat_type)) +
        geom_line(aes(colour = habitat_type, group = habitat_type), size = 3) +
-       #geom_boxplot(aes(colour = habitat_type, group = habitat_type)) +
-       #geom_point(size = 2)+
        labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = paste0('Total arthropod count by month on brittlebush plants treated with ','treatment_title'))+
        scale_color_manual(values= wes_palette("GrandBudapest1", n = 3))+
        theme_minimal()+
@@ -282,27 +244,7 @@ server <-function(input, output, session){
        theme(legend.position = "none")
 
    },bg = 'transparent')
-#use renderPlotly for interactive map with zoom etc!!!
-   #in server, output$arth_treatment_plot <- renderPlotly({})
-   #in ui, plotlyOutput(outputId = "habitat_plot")
 
-
-#    #widget5_plant_biomass_date data
-#    date_select2 <- reactive({
-#      df_final %>%
-#        select(month_number,plant_dry_mass, indiv_count) %>%
-#        group_by(month_number, plant_dry_mass, indiv_count)
-# })
-#    #widget5_plant_biomass_date plot
-#    output$date_plot2 <- renderPlot({
-#      date_select2() %>%
-#        ggplot()+
-#        geom_boxplot(aes(x = month_number, y = plant_dry_mass, group = month_number, fill = factor(month_number)))+
-#        coord_cartesian(xlim=input$date_slider)+
-#        scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
-#        labs(x = "Month Number", y = "Plant Biomass ()", fill = "Month Number")+
-#        theme_minimal()
-#    })
 }
 
 

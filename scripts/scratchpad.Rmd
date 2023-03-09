@@ -164,22 +164,91 @@ plot
      
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+### Anne's inserts
+```{r}
+
+###old widget
+ # (checkboxGroupInput(inputId = "habitat_type",
+                       #               label = "Choose habitat type",
+                       #               choices = c("Desert", "Remnant", "Urban"))
+                       # ) #end of checkboxGroup
+
+
+### old panel 1 output bar graph widget
+#p("Output: habitat bar plot"),
+                               #plotOutput(outputId = "habitat_plot"),
+
+
+
+#### box plot widget choices
+# choices = c("Low water (cage)" = "R",
+                                                 #             "Low water (no cage)" = "O",
+                                                 #             "Medium water (cage)" = "B",
+                                                 #             "Medium water (no cage)" = "G",
+                                                 #             "High water (cage)" = "Y",
+                                                 #             "High water (no cage)" = "P"))
+                                           #unique(df_final$treatment_name))
+                                                 #choices = c("LOW" = "LOW", "MEDIUM" = "MEDIUM", "HIGH" = "HIGH"))#,
+
+
 ```
 
-## Including Plots
+### AY - pieces from server side
+```{r}
+### earlier version of plots for widget1
 
-You can also embed plots, for example:
+  # #widget_habitat_type data
+  # habitat_select <- reactive({
+  #   df_final %>%
+  #     filter(habitat_type == input$habitat_type)
+  # })
+  #
+  # #widget_habitat_type plot
+  # output$habitat_plot <- renderPlot({
+  #   ggplot(data = habitat_select(),
+  #          aes(x = habitat_type,
+  #              y = plant_dry_mass) +
+  #            geom_point()
+  #   )
+  #
+  # })
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+
+
+
+###Notes
+
+#use renderPlotly for interactive map with zoom etc!!!
+   #in server, output$arth_treatment_plot <- renderPlotly({})
+   #in ui, plotlyOutput(outputId = "habitat_plot")
+
+
+
+### old widgets
+
+#    #widget5_plant_biomass_date data
+#    date_select2 <- reactive({
+#      df_final %>%
+#        select(month_number,plant_dry_mass, indiv_count) %>%
+#        group_by(month_number, plant_dry_mass, indiv_count)
+# })
+#    #widget5_plant_biomass_date plot
+#    output$date_plot2 <- renderPlot({
+#      date_select2() %>%
+#        ggplot()+
+#        geom_boxplot(aes(x = month_number, y = plant_dry_mass, group = month_number, fill = factor(month_number)))+
+#        coord_cartesian(xlim=input$date_slider)+
+#        scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
+#        labs(x = "Month Number", y = "Plant Biomass ()", fill = "Month Number")+
+#        theme_minimal()
+#    })
+
+
+
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
