@@ -13,11 +13,22 @@ library(sf)
 library(janitor)
 
 df_final <- read_csv(here('data','df_final.csv'))
-#Load and wrangle spatial data
+
+### arrange data in order of treatment_name
+# df_final %>%
+#   arrange(treatment_name) %>%
+#   as.factor(treatment_name)
+#
+# df_final %>%
+#   mutate(treatment_name = factor(treatment_name, levels = target_cc)) %>%
+#   arrange(treatment_name)
+
+
+### Load and wrangle spatial data
 locations <- read_csv(here('data','site_locations.csv')) %>%
   drop_na()
 
-locations_sf = st_as_sf(locations, coords = c("long", "lat"),
+locations_sf <- st_as_sf(locations, coords = c("long", "lat"),
                         crs = 4326) %>%
   mutate(text = paste0("Site Name: ", name, "\n", "Habitat Type: ", habitat_type))
 
@@ -58,6 +69,7 @@ ui <- fluidPage(
                             #      height = '100px',
                             #      width = '100px'
                             #), # end fluidPage
+                    img(src = "brittlebush_iNaturalist_76846174_SimonTonge.jpg"),
                    sidebarLayout(
                      sidebarPanel(
                        # (checkboxGroupInput(inputId = "habitat_type",
