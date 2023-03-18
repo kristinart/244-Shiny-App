@@ -11,6 +11,7 @@ library(wesanderson)
 library(plotly)
 library(sf)
 library(janitor)
+library(shinyWidgets)
 
 df_final <- read_csv(here('data','df_final.csv'))
 
@@ -71,7 +72,14 @@ ui <- fluidPage(
                             #), # end fluidPage
                     img(src = "brittlebush_iNaturalist_76846174_SimonTonge.jpg"),
                    sidebarLayout(
-                     sidebarPanel(), #end of sidebar panel
+                     sidebarPanel(
+                       checkboxGroupButtons(inputId = "map_habitat_type",
+                                          label = "Select Habitat Type",
+                                          choices = c('Urban','Remnant','Desert'),
+                                          selected = ('Urban'),
+                                          size = 'sm',
+                                          direction = 'vertical')
+                     ), #end of sidebar panel
                      mainPanel(#p("Output: habitat bar plot"),
                                plotlyOutput(outputId = "map_plot")
                                ) #end of main panel
@@ -131,13 +139,18 @@ ui <- fluidPage(
 )
 
 server <-function(input, output, session){
+  map_habitat_select <- reactive({
+    locations_sf %>%
+      filter(habitat_type %in% input$map_habitat_type)
+  })
 
+  col <- c('Urban' = "#FD6467", 'Remnant' = "#5B1A18", 'Desert' = "#A2A475")
 
   output$map_plot <- renderPlotly({
     map <- ggplot()+
       geom_sf(data = maricopa_sf, color = 'black', fill = "#F1BB7B") +
-      geom_sf(data = locations_sf, size = 2, shape = 17, aes(text = text, color = habitat_type))+
-      scale_color_manual(values= c("#FD6467", "#5B1A18", "#A2A475"))+
+      geom_sf(data = map_habitat_select(), size = 2, shape = 17, aes(text = text, color = habitat_type))+
+      scale_color_manual(values= col)+
       labs(color = "Habitat Type")+
       theme_minimal()+
       theme(
