@@ -190,7 +190,8 @@ server <-function(input, output, session){
     if (input$switch == 'TRUE'){
       df_final %>%
         select(date, plant_id, habitat_type, site_id, name, treatment_name, plant_dry_mass) %>%
-        drop_na(plant_dry_mass)
+        drop_na(plant_dry_mass) %>%
+        filter(treatment_name == input$treatment_name_plant)
     }
     else{
       df_final %>%
@@ -204,11 +205,10 @@ server <-function(input, output, session){
     table()
   })
 
-   # widget 4: arthropods by treatment trype
+   # widget 4: arthropods by treatment type
    arth_treatment_select <- reactive({
      df_final %>%
        filter(treatment_name == input$treatment_name) %>%
-       #filter(treatment_name == 'high water + cage') %>%
        drop_na(indiv_count) %>%
        group_by(date,  habitat_type) %>% #site_id,
        summarise(sum(indiv_count)) %>%
