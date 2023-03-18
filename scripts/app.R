@@ -12,18 +12,10 @@ library(plotly)
 library(sf)
 library(janitor)
 library(shinyWidgets)
+library(DT)
 
+#Load plant and arthropod data
 df_final <- read_csv(here('data','df_final.csv'))
-
-### arrange data in order of treatment_name
-# df_final %>%
-#   arrange(treatment_name) %>%
-#   as.factor(treatment_name)
-#
-# df_final %>%
-#   mutate(treatment_name = factor(treatment_name, levels = target_cc)) %>%
-#   arrange(treatment_name)
-
 
 ### Load and wrangle spatial data
 locations <- read_csv(here('data','site_locations.csv')) %>%
@@ -40,6 +32,7 @@ maricopa_sf <- arizona_sf %>%
   filter(name10 == 'Maricopa')
 
 
+#define user interface
 ui <- fluidPage(
   theme = bs_theme(
     version = 5,
@@ -96,10 +89,19 @@ ui <- fluidPage(
                               checkboxGroupInput(inputId = "treatment_name_plant",
                                            label = "Select Cluster Treatment",
                                            choices = c("low water + cage", "low water + no cage","medium water + cage","medium water + no cage","high water + cage","high water + no cage"),
-                                           selected = c(df_final$treatment_name[1], 'medium water + cage'))
+                                           selected = c(df_final$treatment_name[1], 'medium water + cage')),
+                              switchInput(
+                                inputId = "switch",
+                                label = "View Data",
+                                labelWidth = "80px",
+                                onLabel = "YES",
+                                offLabel = "NO",
+                              )
                                     ), # end sidebar panel
                           mainPanel(#p("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions"),
-                                    plotOutput(outputId = "plant_treatment_plot"))
+                                    plotOutput(outputId = "plant_treatment_plot"),
+                                    dataTableOutput("table")
+                                    )
                  ) #end of sidebar layout
                  ) #end of fluidpage
                  ), #end of tab 2
@@ -120,12 +122,6 @@ ui <- fluidPage(
                                             "Select Cluster Treatment",
                                             choices = c("low water + cage", "low water + no cage","medium water + cage","medium water + no cage","high water + cage","high water + no cage"),
                                             selected = df_final$treatment_name[1]),
-                                sliderInput(inputId = "date_slider",
-                                            label = "Select Month Range",
-                                            min = 1,
-                                            max = 6,
-                                            value = c(1,6),
-                                            step = 1)
                                 ), #end of sidebar panel
                               mainPanel(fluidRow(
                                 splitLayout(cellWidths = c("50%", "50%"),
@@ -138,7 +134,9 @@ ui <- fluidPage(
                  )#end of navbarPage
 )
 
+#define app's server
 server <-function(input, output, session){
+  #widget 1: map
   map_habitat_select <- reactive({
     locations_sf %>%
       filter(habitat_type %in% input$map_habitat_type)
@@ -165,42 +163,13 @@ server <-function(input, output, session){
     ggplotly(map, tooltip = "text")
   })
 
-  # #widget_habitat_type data
-  # habitat_select <- reactive({
-  #   df_final %>%
-  #     filter(habitat_type == input$habitat_type)
-  # })
-  #
-  # #widget_habitat_type plot
-  # output$habitat_plot <- renderPlot({
-  #   ggplot(data = habitat_select(),
-  #          aes(x = habitat_type,
-  #              y = plant_dry_mass) +
-  #            geom_point()
-  #   )
-  #
-  # })
-
-  ### widget1_habitat_type
-  # habitat_select <- reactive({
-  #      df_final %>%
-  #        filter(habitat_type == input$habitat_type)
-  # })
-  #
-  # output$habitat_image <- renderPlot({
-  #   ggdraw () +
-  #     draw_image("https://images.unsplash.com/photo-1470164971321-eb5ac2c35f2e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80")
-  # })
-
-
-  # widget2_plant_treatment_type data
+  # widget2: plant means by treatment type
   plant_treatment_select <- reactive({
     df_final %>%
       filter(treatment_name == input$treatment_name_plant) %>%
       drop_na(plant_dry_mass)
   })
 
-  #widget2_plant_treatment_type plot
   output$plant_treatment_plot <- renderPlot({
     ggplot(data = plant_treatment_select(), aes(x = treatment_name,
                                                 y = plant_dry_mass,
@@ -216,7 +185,26 @@ server <-function(input, output, session){
 
   },bg = 'transparent')
 
-   # widget3_arthropod_treatment_id data
+  #widget 3: data table
+  table <- reactive({
+    if (input$switch == 'TRUE'){
+      df_final %>%
+        select(date, plant_id, habitat_type, site_id, name, treatment_name, plant_dry_mass) %>%
+        drop_na(plant_dry_mass)
+    }
+    else{
+      df_final %>%
+        select(date, plant_id, habitat_type, site_id, name, treatment_name, plant_dry_mass) %>%
+        drop_na(plant_dry_mass) %>%
+        slice(0)
+    }
+    })
+
+  output$table <- renderDataTable({
+    table()
+  })
+
+   # widget 4: arthropods by treatment trype
    arth_treatment_select <- reactive({
      df_final %>%
        filter(treatment_name == input$treatment_name) %>%
@@ -228,7 +216,6 @@ server <-function(input, output, session){
        arrange(date)
      })
 
-   #create treatment reaction to paste into plot title below
    treatment_title <- reactive({
      df_final %>%
        filter(treatment_name == input$treatment_name) %>%
@@ -236,7 +223,6 @@ server <-function(input, output, session){
        unique()
    })
 
-   #widget3_arthropod_treatment_id plot
    output$arth_treatment_plot <- renderPlot({
      ggplot(data = arth_treatment_select(), aes(x = date, y = total_arth, colour = habitat_type)) +
        geom_line(aes(colour = habitat_type, group = habitat_type), size = 3) +
@@ -247,17 +233,18 @@ server <-function(input, output, session){
 
    },bg = 'transparent')
 
-   #widget4_arthropod_abundance_date data
-   date_select <- reactive({
+   #additional figure, non-reactive (no widget)
+   date_select <- #reactive({
      df_final %>%
        select(month,month_number, plant_dry_mass, indiv_count) %>%
        group_by(month, month_number) %>%
        summarise(across(c(indiv_count, plant_dry_mass), ~ mean(.x, na.rm = TRUE))) %>%
        arrange(month_number)
-   })
-   #widget4_arthropod_abundance_date plot
+   #})
+
    output$date_plot <- renderPlot({
-     date_select() %>%
+     #date_select() %>%
+     date_select %>%
        ggplot()+
        geom_col(aes(x=month_number, y=plant_dry_mass, fill = factor(month_number)), alpha = 0.6)+
        geom_line(aes(x=month_number, y=100*indiv_count),color="black",size=2)+
@@ -272,9 +259,6 @@ server <-function(input, output, session){
 
 }
 
-
-
-
-
+#combine ui and server
 shinyApp(ui = ui, server = server)
 

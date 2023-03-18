@@ -13,6 +13,13 @@ library(shinythemes)
 library(bslib)
 ```
 
+```{r}
+df_final <- read_csv(here('data','df_final.csv'))
+new <- df_final %>% 
+  select(date, plant_id, habitat_type, site_id, name, treatment_name, plant_dry_mass) %>%
+  drop_na(plant_dry_mass)
+```
+
 
 ```{r setup, include=FALSE}
 df_final <- read_csv(here('data','df_final.csv'))
