@@ -55,8 +55,15 @@ ui <- fluidPage(
                  fluidPage(
                    titlePanel("Introduction and Background"),
                  #  img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
-                     p("This study examined the species abundance, richness, and evenness of arthropods, and the plant productivity of brittlebush, in response to different habitats and treatment conditions.
-                     The purpose of the study was to better understand any potential impact of different habitat types and growing conditions on urban biodiversity."),
+                     p("Understanding the impacts of bottom-up and top-down management strategies on
+                       species is important for effectively managing urban ecosystems. This study examined the impact of
+                       changes in resource availability (a bottom-up strategy) and predation by birds (a top-down strategy)
+                       on the abundance, richness, and composition of arthropod species in the Phoenix metropolitan area in Arizona."),
+                     strong("Habitat Type Overview"),
+                     p("Nine sites were selected for this study."),
+                     p(span("Urban ", style = "color:purple"), "– sites selected in the city of Phoenix at human-altered landscapes (school yards/ campus). Landscapes near buildings and nonnative ornamental vegetation."),
+                     p(span("Remnant ", style = "color:purple"), "– sites selected in desert remnant sites within or proximal to the city of Phoenix. Open landscapes. Similar native, perennial vegetation to desert sites, but near nonnative trees."),
+                     p(span("Desert ", style="color:purple"), "– sites selected in regional parks in the area around Phoenix. Open landscapes. Primarily native, perennial vegetation."),
                    #img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg",
                        #here("photos", "brittlebush_iNaturalist_76846174_SimonTonge.jpg",
                              #     align = 'center',
