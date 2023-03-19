@@ -89,9 +89,20 @@ ui <- fluidPage(
 
                  tabPanel("Brittlebush",
                  fluidPage(titlePanel("Brittlebush Productivity Under Varying Conditions"),
-                          p("Insert blurb on productivity of the plants under the various treatments.
-                            Notes: this widget is based on treatment_name."),
-                          sidebarLayout(
+                          p("Arthropods are dependent on plants for resources. This study focused on brittlebush ",
+                            span("(Encelia farinosa)", style = "font-style:italic"),
+                            "a native perennial shrub, because of its ability to support many different species of arthropods,
+                            and its function as a foraging site for birds that prey on arthropods."),
+                          p("Plants were examined in each of the different habitats under different watering conditions (low, medium, or high) and with or without cages. The presence or absence of a cage impacts whether or not birds could prey on arthropods on that plant. This impacted arthropod abundance, which in turn impacted plant productivity."),
+                          p("Select the treatment given to a cluster of plants to see the resulting plant dry mass, a measure of plant productivity."),
+                          p("The plant clusters with a “no cage” treatment tended to have a wider range of plant dry masses. These plants were more likely to be more productive than their “cage” treatment counterparts at the same watering level. This is likely because “no cage” allowed birds to prey on arthropods, limiting the arthropod population that
+                            eats the plants. The “cage” plants had greater arthropod abundance, which means there were more arthropods to eat the plants."),
+                          p("While the study found that water had a positive effect on plant growth, this effect is complicated by interactions with other factors like plant’s site habitat type and the presence or absence of a cage. For example, the median plant dry mass appears to be slightly higher for plants in the high water + no cage cluster
+                            treatment group than it is for low or medium water, no-cage plants."),
+                          p("Brittlebush productivity also varied across the different habitat types. For more information on habitat types, see the ", span("Background", style="font-weight:bold" )," tab."),
+                          p("For a detailed data table filtered by selected cluster treatment, click on the “View Data” toggle."),
+
+                       sidebarLayout(
                             sidebarPanel(
                               checkboxGroupInput(inputId = "treatment_name_plant",
                                            label = "Select Cluster Treatment",
