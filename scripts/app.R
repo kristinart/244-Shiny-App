@@ -127,13 +127,27 @@ ui <- fluidPage(
                  tabPanel(title = "Arthropods",
                           fluidPage(
                             titlePanel("Arthropod Abundance on Brittlebush Grown Under Varying Conditions"),
-                            p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions.
-                              Planning to clean up and pretty both plots. For bottom plot, hoping
-                              to get a second y-axis to display plant dry mass too; since they are of such different magnitudes,
-                              it doesn't look good to have them plotted on the same axis. Also hoping to get the slider widget and
-                              x-axis of the plot to have month names (Jan Feb Mar, etc) as the tick labels. Lastly, open to displaying
-                              something else on this tab...we originally talked about species richness but idrk if I want to try to
-                              calculate that with the unclear labels in this dataset..."),
+                            # p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions.
+                            #   Planning to clean up and pretty both plots. For bottom plot, hoping
+                            #   to get a second y-axis to display plant dry mass too; since they are of such different magnitudes,
+                            #   it doesn't look good to have them plotted on the same axis. Also hoping to get the slider widget and
+                            #   x-axis of the plot to have month names (Jan Feb Mar, etc) as the tick labels. Lastly, open to displaying
+                            #   something else on this tab...we originally talked about species richness but idrk if I want to try to
+                            #   calculate that with the unclear labels in this dataset..."),
+
+                            p("Arthropods are invertebrate animals such as insects. The study measured the total count of arthropods
+                              observed each month in three habitat types in response to changes in watering level and cage absence or
+                              presence. Plant growth is water-dependent. The presence or absence of a cage impacts whether or not birds
+                              could prey on arthropods on that plant. Availability of plant biomass and whether or not they have protection
+                              from predators both impact arthropod abundance."),
+                            p("Select the treatment type given to a cluster of plants to see the resulting total arthropod count per month
+                              by habitat type in the line graph."),
+                            p("The bar graph provides additional information: the bars show the plant biomass in each month of the study across
+                              all habitat types. The black line shows the total count of arthropods per plant. The month number correlates to the
+                              month of observation; month 1 is December 2007, and month 6 is May 2008."),
+                            p("Arthropod counts and plat biomass increased to their peak in late spring. The impact of treatment types on total
+                              arthropod count varied greatly by habitat type."),
+
                             sidebarLayout(
                               sidebarPanel(
                                 radioButtons("treatment_name",
