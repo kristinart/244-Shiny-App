@@ -54,7 +54,7 @@ ui <- fluidPage(
                  tabPanel(title = "Background",
                  fluidPage(
                    titlePanel("Introduction and Background"),
-                 #  img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
+                   # img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
                      p("Understanding the impacts of bottom-up and top-down management strategies on
                        species is important for effectively managing urban ecosystems. This study examined the impact of
                        changes in resource availability (a bottom-up strategy) and predation by birds (a top-down strategy)
@@ -64,13 +64,14 @@ ui <- fluidPage(
                      p(span("Urban ", style = "color:purple"), "– sites selected in the city of Phoenix at human-altered landscapes (school yards/ campus). Landscapes near buildings and nonnative ornamental vegetation."),
                      p(span("Remnant ", style = "color:purple"), "– sites selected in desert remnant sites within or proximal to the city of Phoenix. Open landscapes. Similar native, perennial vegetation to desert sites, but near nonnative trees."),
                      p(span("Desert ", style="color:purple"), "– sites selected in regional parks in the area around Phoenix. Open landscapes. Primarily native, perennial vegetation."),
-                   #img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg",
+                   # img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg",
                        #here("photos", "brittlebush_iNaturalist_76846174_SimonTonge.jpg",
                              #     align = 'center',
                             #      height = '100px',
                             #      width = '100px'
                             #), # end fluidPage
-                    img(src = "brittlebush_iNaturalist_76846174_SimonTonge.jpg"),
+                    # img(src = "brittlebush_iNaturalist_76846174_SimonTonge.jpg"),
+
                    sidebarLayout(
                      sidebarPanel(
                        checkboxGroupButtons(inputId = "map_habitat_type",
@@ -81,7 +82,8 @@ ui <- fluidPage(
                                           direction = 'vertical')
                      ), #end of sidebar panel
                      mainPanel(#p("Output: habitat bar plot"),
-                               plotlyOutput(outputId = "map_plot")
+                               plotlyOutput(outputId = "map_plot"),
+                               img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/257913803/medium.jpeg"),
                                ) #end of main panel
                  ) #end of sidebar layout
                  ) #end of fluid page
@@ -101,6 +103,7 @@ ui <- fluidPage(
                             treatment group than it is for low or medium water, no-cage plants."),
                           p("Brittlebush productivity also varied across the different habitat types. For more information on habitat types, see the ", span("Background", style="font-weight:bold" )," tab."),
                           p("For a detailed data table filtered by selected cluster treatment, click on the “View Data” toggle."),
+                          img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg"),
 
                        sidebarLayout(
                             sidebarPanel(
@@ -147,6 +150,7 @@ ui <- fluidPage(
                               month of observation; month 1 is December 2007, and month 6 is May 2008."),
                             p("Arthropod counts and plat biomass increased to their peak in late spring. The impact of treatment types on total
                               arthropod count varied greatly by habitat type."),
+                            img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/227161942/medium.jpeg"),
 
                             sidebarLayout(
                               sidebarPanel(
