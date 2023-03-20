@@ -13,6 +13,8 @@ library(sf)
 library(janitor)
 library(shinyWidgets)
 library(DT)
+library(showtext)
+font_add_google("Poppins", family = "special")
 
 #Load plant and arthropod data
 df_final <- read_csv(here('data','df_final.csv'))
@@ -45,9 +47,9 @@ ui <- fluidPage(
     info = "dodgerblue",
     warning = "yellow",
     danger = "red",
-    base_font = font_google("Merriweather"),
-    code_font = font_google("Asar"),
-    heading_font = font_google("Gravitas One"),
+    base_font = font_google("Poppins"),
+    code_font = font_google("Poppins"),
+    heading_font = font_google("Poppins"),
     font_scale = 1
   ), ### end of theme
   navbarPage(title = "Brittlebush Productivity and Arthropod Community Characteristics",
@@ -56,8 +58,9 @@ ui <- fluidPage(
                    titlePanel(h3("Introduction and Background", align = "center")),
                    br(),
                    fluidRow(
-                     column(10,
-                            p("An experimental field study was carried out by researchers at Arizona State University in 2008 to
+                     column(10, style = "background-color:#D4B2A7;",
+                            br(),
+                            p("An experimental field study was carried out by researchers at Arizona State University between 2007-2008 to
                        determine the effect of different environmental conditions on plant growth and associated arthropod communities.",
                        span("Encelia farinosa", style = "font-style:italic"),", a plant species commonly known as brittlebush, were grown
                        under varying levels of resource availability and predation to explore bottom-up and top-down effects on
@@ -66,50 +69,62 @@ ui <- fluidPage(
                        brittlebush and arthropod data collected for this study."),
                        br(),
                        strong("Habitat Types Overview"),
-                       p(span("Urban ", style = "color:green"), "– sites selected in the city of Phoenix at human-altered landscapes (school yards/ campus). Landscapes near buildings and nonnative ornamental vegetation."),
-                       p(span("Remnant ", style = "color:green"), "– sites selected in desert remnant sites within or proximal to the city of Phoenix. Open landscapes. Similar native, perennial vegetation to desert sites, but near nonnative trees."),
-                       p(span("Desert ", style="color:green"), "– sites selected in regional parks in the area around Phoenix. Open landscapes. Primarily native, perennial vegetation."),
+                       p(span("Urban ", style = "color:green"), "– sites selected in the city of Phoenix at human-altered landscapes (school yards/ campus). Includes landscapes near buildings and contains nonnative ornamental vegetation."),
+                       p(span("Remnant ", style = "color:green"), "– sites selected in desert remnant habitat within or proximal to the city of Phoenix. Includes open landscapes and contains both native, perennial vegetation and non-native trees."),
+                       p(span("Desert ", style="color:green"), "– sites selected in regional parks in the area around Phoenix. Includes open landscapes and primary contains native, perennial vegetation."),
                        br()
                      ), # end of columns 9
-                     column(2,align="center",
+                     column(2,align="center", style = "background-color:#D4B2A7;",
+                            br(),
                             img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/257913803/medium.jpeg", width = 175),
-                            p("Image of a birb.... ")
+                            p("Image of a cactus wren on a cactus in Arizona.")
                      ) #end of columns 3
                    ),
                    fluidRow(
-                     column(12, align="center",
+                     column(7, align="center",
+                            br(),
                             checkboxGroupButtons(inputId = "map_habitat_type",
-                                            label = "Select habitat type(s) below to view all study sites that are located in those habitat(s).",
+                                            label = "Select habitat type(s) below to view all study sites that are located in those habitat(s):",
                                             choices = c('Urban','Remnant','Desert'),
                                             selected = ('Desert'),
-                                            size = 'sm',
+                                            size = 'normal',
                                             status = 'success',
                                             direction = 'horizontal'),
                        plotlyOutput(outputId = "map_plot"),
                        p("Figure 1: Interactive map of Maricopa County, Arizona. Triangular markers represent study sites and colors represent habitat types. Hover over a site to view its name and habitat type. Use the toolbar features to zoom, pan, compare hover points, and more.")
                                ), #end of columns 12
+                     column(5, align = "center",
+                            br(),
+                            selectInput(inputId = "habitat_type_photo",
+                                        label = "Select habitat type to view image of a representative study site:",
+                                        choices = c('Urban - Arizona State University Campus' = 'Urban',
+                                                    'Remnant - South Mountain' = 'Remnant',
+                                                    'Desert - White Tank Mountain Regional Park' = 'Desert'),
+                                        selected = 'Desert'),
+                            imageOutput("image_habitat"),
+                            p("Image: Photos from sample sites of each habitat type. Use the drop-down menu to select a habitat type image to view."),
+                            br()
+                     )
                      ), #end of fluid row
-                  fluidRow(
-                    column(12, align="center",
-                           selectInput(inputId = "habitat_type_photo",
-                                       label = "Show Habitat Photo",
-                                       choices = c('Urban - Arizona State University Campus' = 'Urban',
-                                                   'Remnant - South Mountain' = 'Remnant',
-                                                   'Desert - White Tank Mountain Regional Park' = 'Desert'),
-                                       selected = ('Urban - Arizona State University Campus')),
-                           imageOutput("image_habitat"),
-                           p("Image: Photos from sample sites of each habitat type. Use the drop-down menu to select a habitat type image to view.")
-                    )
-                  ), # end of fluid row
-                 p("Data Citation: Bang, C. 2013. Control of arthropod abundance, richness, and composition in the central Arizona-Phoenix metropolitan area ver 6. Environmental Data Initiative. https://doi.org/10.6073/pasta/22e305a8950091fe4d71ebec6142ecea (Accessed 2023-02-02)")
-                 ) #end of fluid page
+                   fluidRow(
+                     column(12, style = "background-color:#D4B2A7;",
+                            br(),
+                            strong("Data Citations:"),
+                            p("Bang, C. 2013. Control of arthropod abundance, richness, and composition in the central Arizona-Phoenix metropolitan area ver 6. Environmental Data Initiative. https://doi.org/10.6073/pasta/22e305a8950091fe4d71ebec6142ecea (Accessed 2023-02-02)"),
+                            p("TIGER/Line Shapefile, 2019. state, Arizona, Current Block Group State-based. 2021. catalog.data.gov."),
+                            br()
+                     )
+                   ),#end of fluidrow
+                   br()
+                   ) #end of fluid page
                  ), #end of tab 1
 
              tabPanel("Brittlebush",
                  fluidPage(titlePanel(h3("Brittlebush Productivity Under Varying Conditions", align = "center")),
                            br(),
                            fluidRow(
-                             column(9,
+                             column(8, style = "background-color:#D4B2A7;",
+                                    br(),
                                     p("This study focused on brittlebush ", span("(Encelia farinosa)", style = "font-style:italic"),
                                       ", a native perennial shrub, because of its ability to support many different species of arthropods
                             and its role as a foraging site for birds that prey on arthropods. Brittlebush plants involved in the study were grown under different cluster treatments of water availability
@@ -124,23 +139,34 @@ ui <- fluidPage(
                             factors like plants' site habitat type and the presence or absence of a cage. For example, the median plant dry mass appears to
                             be slightly higher for plants in the “high water + no cage” cluster treatment group compared to the “low water + no cage” and “medium water + no cage” plants."),
                             p("Brittlebush productivity also varied across the different habitat types. For more information on habitat types, see the ", span("Background", style="font-weight:bold" )," tab."),
-                            p("Select the cluster treatment(s) brittlebush were grown under to see the resulting plant dry mass(es), a measure of plant productivity.
-                              For a detailed data table filtered by selected cluster treatment, toggle “View Data Table” to “ON.”"),
                             br(),
                                     ), #end of columns 9
-                             column (3,
+                             column (4, align = 'center', style = "background-color:#D4B2A7;",
+                                     br(),
+                                     br(),
+                                     br(),
                                      img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg", width = 350),
-                                     p("Image of a brittlebush...")
+                                     p("Image of a brittlebush plant.")
                                      ) # end of columns 3
                            ),
+                           fluidRow(
+                             column(1),
+                             column(10, align = 'center',
+                                    br(),
+                                    p("Select the cluster treatment(s) brittlebush were grown under to see the resulting plant dry mass(es), a measure of plant productivity.", "\n",
+                              "For a detailed data table filtered by selected cluster treatment, toggle “View Data Table” to “ON.”"),
+                              br()
+                             ),
+                             column(1)
+                           ),
                        sidebarLayout(
-                            sidebarPanel(
+                            sidebarPanel(width = 3,
                               br(),
                               br(),
                               checkboxGroupInput(inputId = "treatment_name_plant",
                                            label = "Select cluster treatment(s) to view plant dry mass(es)",
                                            choices = c("low water + cage", "low water + no cage","medium water + cage","medium water + no cage","high water + cage","high water + no cage"),
-                                           selected = c(df_final$treatment_name[1], 'medium water + cage')),
+                                           selected = c(df_final$treatment_name[1], 'low water + no cage')),
                               br(),
                               br(),
                               br(),
@@ -173,44 +199,60 @@ ui <- fluidPage(
                           fluidPage(
                             titlePanel(h3("Arthropod Abundance on Brittlebush Grown Under Varying Conditions", align = "center")),
                             br(),
-                            p("Arthropods are invertebrate animals such as insects. The study measured the total count of arthropods
-                              observed each month in three habitat types in response to changes in watering level and cage absence or
-                              presence. Plant growth is water-dependent. The presence or absence of a cage impacts whether or not birds
-                              could prey on arthropods on that plant. Availability of plant biomass and whether or not they have protection
-                              from predators both impact arthropod abundance."),
-                            p("Select the treatment type given to a cluster of plants to see the resulting total arthropod count per month
-                              by habitat type in the line graph."),
-                            p("The bar graph provides additional information: the bars show the plant biomass in each month of the study across
-                              all habitat types. The black line shows the total count of arthropods per plant. The month number correlates to the
-                              month of observation; month 1 is December 2007, and month 6 is May 2008."),
-                            p("Arthropod counts and plat biomass increased to their peak in late spring. The impact of treatment types on total
-                              arthropod count varied greatly by habitat type."),
                             fluidRow(
-                              column(6, align = "center",
-                                     img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/227161942/medium.jpeg"),
-                                     p("Image of arthropods on a plant...")
-                                     ), #end of columns 6
-                              column(6, align = "center",
+                              column(5,style = "background-color:#D4B2A7;",
+                                     br(),
+                                     p("Arthropod species associated with each brittlebush plant included in the study were identified and counted.
+                                       The total count of all arthropods observed are displayed in Figures 3 and 4. The amount of arthropods observed
+                                       on a brittlebush is affected by the brittlebush's productivity and the ability for birds to predate on arthropods;
+                                       the presence of a cage surrounding a brittlebush was effective at preventing predation by birds."),
+                                     p("Total arthropod counts increased over the study period and peaked in late spring when brittlebush biomass also peaked.
+                                       The impact of treatment types on total arthropod count varied greatly by habitat type."),
+                                     br(),
+                                     img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/227161942/medium.jpeg", width = 575),
+                                     p("Image of arthropods on a brittlebush plant."),
+                                     br()
+                              ),
+                              column(7,style = "background-color:#D4B2A7;",
+                                     br(),
+                                     br(),
+                                     br(),
+                                     br(),
+                                     br(),
+                                     br(),
                                      plotOutput(outputId = "date_plot"),
-                                     p("Figure 3: Plants and arths...")
-                                     ) #end of columns 6
-                            ), #end of fluidrow
+                                     p("Figure 3: Graph of total monthly plant biomass and total monthly arthropods over the study period. The columns
+                                       represent total plant biomass across all sites and the black line graph represents total arthropod counts per plant
+                                       across all sites. Month number correlates to the experimental observation month where Month 1 is December 2007 and
+                                       Month 6 is May 2008.")
+                                     )
+                            ),
                             br(),
-                            br(),
-                            br(),
+                            fluidRow(
+                              column(12, align = 'center',
+                                     p("Select the plant cluster treatment to view the monthly total arthropod counts associated with brittlebush plants grown
+                                       under that treatment:"),
+                                     br())
+                            ),
                             sidebarLayout(
-                              sidebarPanel(
+                              sidebarPanel(width = 3,
+                                br(),
                                 br(),
                                 br(),
                                 radioButtons("treatment_name",
                                             "Select plant cluster treatment to view associated arthropod abundance",
                                             choices = c("low water + cage", "low water + no cage","medium water + cage","medium water + no cage","high water + cage","high water + no cage"),
                                             selected = df_final$treatment_name[1]),
+                                br(),
+                                br(),
+                                br(),
+                                br(),
                                 br()
                                 ), #end of sidebar panel
                               mainPanel(
                                 plotOutput(outputId = "arth_treatment_plot"),
-                                p("Figure 4: Arths...")
+                                p("Figure 4: Line graph of total monthly arthropod counts observed on brittlebush plants grown under selected cluster treatment.
+                                  Line colors represent habitat types.")
                               ) # end of main panel
                               ) #end of sidebar layout
                             ) #end of fluidpage
@@ -234,18 +276,11 @@ server <-function(input, output, session){
   #   ### Define habitat images
    output$image_habitat <- renderImage({
      ### When input$n is 'Urban', filename is ./photos/image_Urban.jpg
-    filename <- here('./photos',
-                                        paste('image_', input$habitat_type_photo, '.jpg', sep=''))
-
+    filename <- here('./photos',paste('image_', input$habitat_type_photo, '.jpg', sep=''))
     list(src = filename,
-         alt = paste("Habitat type: ", input$habitat_type_photo))
+         alt = paste("Habitat type: ", input$habitat_type_photo), width = 500, height = 350)
 
   }, deleteFile = FALSE)
-
-
-
-
-
 
     #widget 1: map
   map_habitat_select <- reactive({
@@ -268,7 +303,13 @@ server <-function(input, output, session){
         panel.grid.major = element_blank(), #remove major gridlines
         panel.grid.minor = element_blank(), #remove minor gridlines
         legend.background = element_rect(fill='transparent'), #transparent legend bg
-        legend.box.background = element_rect(fill='transparent') #transparent legend panel
+        legend.box.background = element_rect(fill='transparent'), #transparent legend panel
+        legend.title=element_text(size=14, family = "special"),
+        legend.text=element_text(size=12, family = "special"),
+        axis.text.x=element_text( size = 12, family = "special"), #angle=45,hjust=1,
+        axis.text.y=element_text(size = 12, family = "special"),
+        axis.title=element_text(size=14, family = "special"),
+        plot.title = element_text(size = 20, family = "special", hjust = 0.5)
       )
 
     ggplotly(map, tooltip = "text")
@@ -290,13 +331,18 @@ server <-function(input, output, session){
                                                 fill = treatment_name)) +
       geom_violin(trim=FALSE)+
       #geom_boxplot()+
-      #scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
       scale_fill_manual(values = col2)+
       labs(x = "Cluster Treatment",
            y = "Plant Dry Mass (g)",
            fill = 'Treatment Type',
            title = "Average Brittlebush Dry Mass (g) Under Cluster Treatments") +
-      theme_minimal()
+      theme_minimal()+
+      theme(axis.text.x=element_text( size = 12, family = "special"), #angle=45,hjust=1,
+            axis.text.y=element_text(size = 12, family = "special"),
+            axis.title=element_text(size=16, family = "special"),
+            plot.title = element_text(size = 20, hjust = 0.5, family = "special"),
+            legend.title=element_text(size=16, family = "special"),
+            legend.text=element_text(size=14, family = "special"))
 
   },bg = 'transparent')
 
@@ -344,7 +390,12 @@ server <-function(input, output, session){
        labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = (paste0('Total arthropod count by month on brittlebush plants treated with ',treatment_title())))+
        scale_color_manual(values= wes_palette("GrandBudapest1", n = 3))+
        theme_minimal()+
-       theme(axis.text.x=element_text(angle=45,hjust=1, size = 10))
+       theme(axis.text.x=element_text( size = 12, family = "special"), #angle=45,hjust=1,
+             axis.text.y=element_text(size = 12, family = "special"),
+             axis.title=element_text(size=16, family = "special"),
+             plot.title = element_text(size = 20, hjust = 0.5, family = "special"),
+             legend.title=element_text(size=16, family = "special"),
+             legend.text=element_text(size=14, family = "special"))
 
    },bg = 'transparent')
 
@@ -361,14 +412,21 @@ server <-function(input, output, session){
      #date_select() %>%
      date_select %>%
        ggplot()+
-       geom_col(aes(x=month_number, y=plant_dry_mass, fill = factor(month_number)), alpha = 0.6)+
+       geom_col(aes(x=month_number, y=plant_dry_mass, fill = factor(month_number)))+ #, alpha = 0.6
        geom_line(aes(x=month_number, y=100*indiv_count),color="black",size=2)+
        scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
        coord_cartesian(xlim=input$date_slider)+
-       labs(x="Month Number",y="Plant Biomass (g)", fill = "Month Number")+
+       labs(x="Month Number",y="Plant Biomass (g)", fill = "Month Number", title = "Total monthly brittlebush biomass and arthropod counts per plant")+
        scale_y_continuous(sec.axis=sec_axis(~.*0.01,name="Arthropods per plant"))+
        theme_minimal()+
-       theme(legend.position = "none")
+       theme(legend.position = "none",
+             axis.text.x=element_text( size = 12, family = "special"), #angle=45,hjust=1,
+             axis.text.y=element_text(size = 12, family = "special"),
+             axis.title=element_text(size=16, family = "special"),
+             plot.title = element_text(size = 20, family = "special", hjust = 0.5),
+             panel.grid.major = element_blank(), #remove major gridlines
+             panel.grid.minor = element_blank() #remove minor gridlines
+             )
 
    },bg = 'transparent')
 
