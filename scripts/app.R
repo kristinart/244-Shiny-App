@@ -79,12 +79,21 @@ ui <- fluidPage(
                                           choices = c('Urban','Remnant','Desert'),
                                           selected = ('Urban'),
                                           size = 'sm',
-                                          direction = 'vertical')
+                                          direction = 'vertical'),
+                       selectInput(inputId = "habitat_type_photo",
+                                   label = "Show Habitat Photo",
+                                   choices = c('Urban - Arizona State University Campus' = 'Urban',
+                                               'Remnant - South Mountain' = 'Remnant',
+                                               'Desert - White Tank Mountain Regional Park' = 'Desert'),
+                                   selected = ('Urban - Arizona State University Campus'))
                      ), #end of sidebar panel
                      mainPanel(#p("Output: habitat bar plot"),
                                plotlyOutput(outputId = "map_plot"),
-                               img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/257913803/medium.jpeg"),
-                               ) #end of main panel
+                               imageOutput("image_habitat"),
+                               #img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/257913803/medium.jpeg"),
+                               #img(src = "https://images.unsplash.com/photo-1641828309555-46fd3f7b45ee?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"),
+                     ), #end of main panel
+
                  ) #end of sidebar layout
                  ) #end of fluid page
                  ), #end of tab 1
@@ -172,7 +181,34 @@ ui <- fluidPage(
 
 #define app's server
 server <-function(input, output, session){
-  #widget 1: map
+
+    # widget 0: photo
+   habitat_type_photo <- reactive({
+   if(input$habitat_type_photo == TRUE){
+     image(src = "image_habitat")
+   }
+   else{
+   }
+   }
+   )
+
+  #   ### Define habitat images
+   output$image_habitat <- renderImage({
+     ### When input$n is 'Urban', filename is ./photos/image_Urban.jpg
+    filename <- here('./photos',
+                                        paste('image_', input$habitat_type_photo, '.jpg', sep=''))
+
+    list(src = filename,
+         alt = paste("Habitat type: ", input$habitat_type_photo))
+
+  }, deleteFile = FALSE)
+
+
+
+
+
+
+    #widget 1: map
   map_habitat_select <- reactive({
     locations_sf %>%
       filter(habitat_type %in% input$map_habitat_type)
