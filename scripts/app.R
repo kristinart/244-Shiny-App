@@ -53,91 +53,114 @@ ui <- fluidPage(
   navbarPage(title = "Brittlebush Productivity and Arthropod Community Characteristics",
                  tabPanel(title = "Background",
                  fluidPage(
-                   titlePanel("Introduction and Background"),
-                   # img(src ="https://www.researchgate.net/profile/Christofer-Bang/publication/225081502/figure/fig2/AS:669081560707081@1536532883563/Map-of-the-Phoenix-metropolitan-area-with-approximate-location-of-the-two-weather.ppm"),
-                     p("Understanding the impacts of bottom-up and top-down management strategies on
-                       species is important for effectively managing urban ecosystems. This study examined the impact of
-                       changes in resource availability (a bottom-up strategy) and predation by birds (a top-down strategy)
-                       on the abundance, richness, and composition of arthropod species in the Phoenix metropolitan area in Arizona."),
-                     strong("Habitat Type Overview"),
-                     p("Nine sites were selected for this study."),
-                     p(span("Urban ", style = "color:purple"), "– sites selected in the city of Phoenix at human-altered landscapes (school yards/ campus). Landscapes near buildings and nonnative ornamental vegetation."),
-                     p(span("Remnant ", style = "color:purple"), "– sites selected in desert remnant sites within or proximal to the city of Phoenix. Open landscapes. Similar native, perennial vegetation to desert sites, but near nonnative trees."),
-                     p(span("Desert ", style="color:purple"), "– sites selected in regional parks in the area around Phoenix. Open landscapes. Primarily native, perennial vegetation."),
-                   # img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg",
-                       #here("photos", "brittlebush_iNaturalist_76846174_SimonTonge.jpg",
-                             #     align = 'center',
-                            #      height = '100px',
-                            #      width = '100px'
-                            #), # end fluidPage
-                    # img(src = "brittlebush_iNaturalist_76846174_SimonTonge.jpg"),
-
-                   sidebarLayout(
-                     sidebarPanel(
-                       checkboxGroupButtons(inputId = "map_habitat_type",
-                                          label = "Select Habitat Type",
-                                          choices = c('Urban','Remnant','Desert'),
-                                          selected = ('Urban'),
-                                          size = 'sm',
-                                          direction = 'vertical')
-                     ), #end of sidebar panel
-                     mainPanel(#p("Output: habitat bar plot"),
-                               plotlyOutput(outputId = "map_plot"),
-                               img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/257913803/medium.jpeg"),
-                               ) #end of main panel
-                 ) #end of sidebar layout
+                   titlePanel(h3("Introduction and Background", align = "center")),
+                   br(),
+                   fluidRow(
+                     column(10,
+                            p("An experimental field study was carried out by researchers at Arizona State University in 2008 to
+                       determine the effect of different environmental conditions on plant growth and associated arthropod communities.",
+                       span("Encelia farinosa", style = "font-style:italic"),", a plant species commonly known as brittlebush, were grown
+                       under varying levels of resource availability and predation to explore bottom-up and top-down effects on
+                       brittlebush growth and associated arthropod communities. Brittlebush plants from 9 sites across the Arizona-Pheonix
+                       metropolitan area spanning 3 different habitat types were used for this study. This app can be used to explore the
+                       brittlebush and arthropod data collected for this study."),
+                       br(),
+                       strong("Habitat Types Overview"),
+                       p(span("Urban ", style = "color:green"), "– sites selected in the city of Phoenix at human-altered landscapes (school yards/ campus). Landscapes near buildings and nonnative ornamental vegetation."),
+                       p(span("Remnant ", style = "color:green"), "– sites selected in desert remnant sites within or proximal to the city of Phoenix. Open landscapes. Similar native, perennial vegetation to desert sites, but near nonnative trees."),
+                       p(span("Desert ", style="color:green"), "– sites selected in regional parks in the area around Phoenix. Open landscapes. Primarily native, perennial vegetation."),
+                       br()
+                     ), # end of columns 9
+                     column(2,align="center",
+                            img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/257913803/medium.jpeg", width = 175),
+                            p("Image of a birb.... ")
+                     ) #end of columns 3
+                   ),
+                   fluidRow(
+                     column(12, align="center",
+                            checkboxGroupButtons(inputId = "map_habitat_type",
+                                            label = "Select habitat type(s) below to view all study sites that are located in those habitat(s).",
+                                            choices = c('Urban','Remnant','Desert'),
+                                            selected = ('Desert'),
+                                            size = 'sm',
+                                            status = 'success',
+                                            direction = 'horizontal'),
+                       plotlyOutput(outputId = "map_plot"),
+                       p("Figure 1: Interactive map of Maricopa County, Arizona. Triangular markers represent study sites and colors represent habitat types. Hover over a site to view its name and habitat type. Use the toolbar features to zoom, pan, compare hover points, and more.")
+                               ), #end of columns 12
+                     ), #end of fluid row
+                 p("Data Citation: Bang, C. 2013. Control of arthropod abundance, richness, and composition in the central Arizona-Phoenix metropolitan area ver 6. Environmental Data Initiative. https://doi.org/10.6073/pasta/22e305a8950091fe4d71ebec6142ecea (Accessed 2023-02-02)")
                  ) #end of fluid page
                  ), #end of tab 1
 
-                 tabPanel("Brittlebush",
-                 fluidPage(titlePanel("Brittlebush Productivity Under Varying Conditions"),
-                          p("Arthropods are dependent on plants for resources. This study focused on brittlebush ",
-                            span("(Encelia farinosa)", style = "font-style:italic"),
-                            "a native perennial shrub, because of its ability to support many different species of arthropods,
-                            and its function as a foraging site for birds that prey on arthropods."),
-                          p("Plants were examined in each of the different habitats under different watering conditions (low, medium, or high) and with or without cages. The presence or absence of a cage impacts whether or not birds could prey on arthropods on that plant. This impacted arthropod abundance, which in turn impacted plant productivity."),
-                          p("Select the treatment given to a cluster of plants to see the resulting plant dry mass, a measure of plant productivity."),
-                          p("The plant clusters with a “no cage” treatment tended to have a wider range of plant dry masses. These plants were more likely to be more productive than their “cage” treatment counterparts at the same watering level. This is likely because “no cage” allowed birds to prey on arthropods, limiting the arthropod population that
-                            eats the plants. The “cage” plants had greater arthropod abundance, which means there were more arthropods to eat the plants."),
-                          p("While the study found that water had a positive effect on plant growth, this effect is complicated by interactions with other factors like plant’s site habitat type and the presence or absence of a cage. For example, the median plant dry mass appears to be slightly higher for plants in the high water + no cage cluster
-                            treatment group than it is for low or medium water, no-cage plants."),
-                          p("Brittlebush productivity also varied across the different habitat types. For more information on habitat types, see the ", span("Background", style="font-weight:bold" )," tab."),
-                          p("For a detailed data table filtered by selected cluster treatment, click on the “View Data” toggle."),
-                          img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg"),
-
+             tabPanel("Brittlebush",
+                 fluidPage(titlePanel(h3("Brittlebush Productivity Under Varying Conditions", align = "center")),
+                           br(),
+                           fluidRow(
+                             column(9,
+                                    p("This study focused on brittlebush ", span("(Encelia farinosa)", style = "font-style:italic"),
+                                      ", a native perennial shrub, because of its ability to support many different species of arthropods
+                            and its role as a foraging site for birds that prey on arthropods. Brittlebush plants involved in the study were grown under different cluster treatments of water availability
+                            (low, medium, or high) and cage presence (with or without). The varying water availability was chosen to
+                            determine the effect of a bottom-up condition and the cage presence was chosen to determine the effect of top-down
+                            predation by birds that could prey on arthropods associated with brittlebush plants."),
+                            p("The plants grown with a “no cage” treatment tended to have a wider range of plant dry masses.
+                            These plants were more likely to be more productive than their “cage” treatment counterparts at the same watering level.
+                            This is likely because “no cage” allowed birds to prey on arthropods, limiting the arthropod populations that
+                            reduce plant biomass. The “cage” plants had greater arthropod abundance, which means there were more arthropods to eat the plants."),
+                            p("While the study found that water had a positive effect on plant growth, this effect is complicated by interactions with other
+                            factors like plants' site habitat type and the presence or absence of a cage. For example, the median plant dry mass appears to
+                            be slightly higher for plants in the “high water + no cage” cluster treatment group compared to the “low water + no cage” and “medium water + no cage” plants."),
+                            p("Brittlebush productivity also varied across the different habitat types. For more information on habitat types, see the ", span("Background", style="font-weight:bold" )," tab."),
+                            p("Select the cluster treatment(s) brittlebush were grown under to see the resulting plant dry mass(es), a measure of plant productivity.
+                              For a detailed data table filtered by selected cluster treatment, toggle “View Data Table” to “ON.”"),
+                            br(),
+                                    ), #end of columns 9
+                             column (3,
+                                     img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg", width = 350),
+                                     p("Image of a brittlebush...")
+                                     ) # end of columns 3
+                           ),
                        sidebarLayout(
                             sidebarPanel(
+                              br(),
+                              br(),
                               checkboxGroupInput(inputId = "treatment_name_plant",
-                                           label = "Select Cluster Treatment",
+                                           label = "Select cluster treatment(s) to view plant dry mass(es)",
                                            choices = c("low water + cage", "low water + no cage","medium water + cage","medium water + no cage","high water + cage","high water + no cage"),
                                            selected = c(df_final$treatment_name[1], 'medium water + cage')),
+                              br(),
+                              br(),
+                              br(),
                               switchInput(
                                 inputId = "switch",
-                                label = "View Data",
+                                label = "View Data Table",
                                 labelWidth = "80px",
                                 onLabel = "YES",
                                 offLabel = "NO",
-                              )
+                              ),
+                              br()
                                     ), # end sidebar panel
-                          mainPanel(#p("output: box and whisker plot of plant productivity under the chosen combination of treatment conditions"),
-                                    plotOutput(outputId = "plant_treatment_plot"),
-                                    dataTableOutput("table")
+                          mainPanel(plotOutput(outputId = "plant_treatment_plot"),
+                                    p("Figure 2: Violin plot of plant productivity under the chosen cluster treatments. The width of each curve corresponds to the density or frequency of data points observed in that region.")
                                     )
-                 ) #end of sidebar layout
+                 ), #end of sidebar layout
+                 fluidRow(
+                   column(12, align = 'center',
+                          br(),
+                          br(),
+                          p("Table 1: Interactive data table of brittlebush included under the selected cluster treatment(s).
+                            Specify the number of entries to show, use the searchbox to find key terms, and sort the table by columns of interest."),
+                          dataTableOutput("table")
+                          ) #end of columns 12
+                 ) #end of fluidrow
                  ) #end of fluidpage
                  ), #end of tab 2
 
-                 tabPanel(title = "Arthropods",
+             tabPanel(title = "Arthropods",
                           fluidPage(
-                            titlePanel("Arthropod Abundance on Brittlebush Grown Under Varying Conditions"),
-                            # p("Insert blurb on arthropod community response to brittlebush productivity under varying conditions.
-                            #   Planning to clean up and pretty both plots. For bottom plot, hoping
-                            #   to get a second y-axis to display plant dry mass too; since they are of such different magnitudes,
-                            #   it doesn't look good to have them plotted on the same axis. Also hoping to get the slider widget and
-                            #   x-axis of the plot to have month names (Jan Feb Mar, etc) as the tick labels. Lastly, open to displaying
-                            #   something else on this tab...we originally talked about species richness but idrk if I want to try to
-                            #   calculate that with the unclear labels in this dataset..."),
-
+                            titlePanel(h3("Arthropod Abundance on Brittlebush Grown Under Varying Conditions", align = "center")),
+                            br(),
                             p("Arthropods are invertebrate animals such as insects. The study measured the total count of arthropods
                               observed each month in three habitat types in response to changes in watering level and cage absence or
                               presence. Plant growth is water-dependent. The presence or absence of a cage impacts whether or not birds
@@ -150,19 +173,32 @@ ui <- fluidPage(
                               month of observation; month 1 is December 2007, and month 6 is May 2008."),
                             p("Arthropod counts and plat biomass increased to their peak in late spring. The impact of treatment types on total
                               arthropod count varied greatly by habitat type."),
-                            img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/227161942/medium.jpeg"),
-
+                            fluidRow(
+                              column(6, align = "center",
+                                     img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/227161942/medium.jpeg"),
+                                     p("Image of arthropods on a plant...")
+                                     ), #end of columns 6
+                              column(6, align = "center",
+                                     plotOutput(outputId = "date_plot"),
+                                     p("Figure 3: Plants and arths...")
+                                     ) #end of columns 6
+                            ), #end of fluidrow
+                            br(),
+                            br(),
+                            br(),
                             sidebarLayout(
                               sidebarPanel(
+                                br(),
+                                br(),
                                 radioButtons("treatment_name",
-                                            "Select Cluster Treatment",
+                                            "Select plant cluster treatment to view associated arthropod abundance",
                                             choices = c("low water + cage", "low water + no cage","medium water + cage","medium water + no cage","high water + cage","high water + no cage"),
                                             selected = df_final$treatment_name[1]),
+                                br()
                                 ), #end of sidebar panel
-                              mainPanel(fluidRow(
-                                splitLayout(cellWidths = c("50%", "50%"),
+                              mainPanel(
                                 plotOutput(outputId = "arth_treatment_plot"),
-                                plotOutput(outputId = "date_plot")))
+                                p("Figure 4: Arths...")
                               ) # end of main panel
                               ) #end of sidebar layout
                             ) #end of fluidpage
@@ -178,7 +214,7 @@ server <-function(input, output, session){
       filter(habitat_type %in% input$map_habitat_type)
   })
 
-  col <- c('Urban' = "#FD6467", 'Remnant' = "#5B1A18", 'Desert' = "#A2A475")
+  col <- c('Urban' = "#5B1A18", 'Remnant' = "#FD6467", 'Desert' = "#A2A475")
 
   output$map_plot <- renderPlotly({
     map <- ggplot()+
@@ -206,17 +242,21 @@ server <-function(input, output, session){
       drop_na(plant_dry_mass)
   })
 
+  col2 <- c("low water + cage" = "#F1BB7B", "low water + no cage" = "#FD6467","medium water + cage"="#5B1A18","medium water + no cage"="#D67236","high water + cage"="#A2A475","high water + no cage"="#FAEFD1")
+
   output$plant_treatment_plot <- renderPlot({
     ggplot(data = plant_treatment_select(), aes(x = treatment_name,
                                                 y = plant_dry_mass,
                                                 group = treatment_name,
                                                 fill = treatment_name)) +
       geom_violin(trim=FALSE)+
-      scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
+      #geom_boxplot()+
+      #scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
+      scale_fill_manual(values = col2)+
       labs(x = "Cluster Treatment",
-           y = "Plant Dry Mass ()",
+           y = "Plant Dry Mass (g)",
            fill = 'Treatment Type',
-           title = "Brittlebush Growth Resulting from Treatments") +
+           title = "Average Brittlebush Dry Mass (g) Under Cluster Treatments") +
       theme_minimal()
 
   },bg = 'transparent')
@@ -262,7 +302,7 @@ server <-function(input, output, session){
    output$arth_treatment_plot <- renderPlot({
      ggplot(data = arth_treatment_select(), aes(x = date, y = total_arth, colour = habitat_type)) +
        geom_line(aes(colour = habitat_type, group = habitat_type), size = 3) +
-       labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = str_wrap(paste0('Total arthropod count by month on brittlebush plants treated with ',treatment_title())))+
+       labs(x = 'Date', y = 'Total Count', colour = 'Habitat Type', title = (paste0('Total arthropod count by month on brittlebush plants treated with ',treatment_title())))+
        scale_color_manual(values= wes_palette("GrandBudapest1", n = 3))+
        theme_minimal()+
        theme(axis.text.x=element_text(angle=45,hjust=1, size = 10))
@@ -286,7 +326,7 @@ server <-function(input, output, session){
        geom_line(aes(x=month_number, y=100*indiv_count),color="black",size=2)+
        scale_fill_manual(values= c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236","#A2A475","#FAEFD1"))+
        coord_cartesian(xlim=input$date_slider)+
-       labs(x="Month Number",y="Plant Biomass ()", fill = "Month Number")+
+       labs(x="Month Number",y="Plant Biomass (g)", fill = "Month Number")+
        scale_y_continuous(sec.axis=sec_axis(~.*0.01,name="Arthropods per plant"))+
        theme_minimal()+
        theme(legend.position = "none")
