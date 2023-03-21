@@ -43,7 +43,7 @@ ui <- fluidPage(
     bg = "antiquewhite",
     fg = "black",
     primary = "purple",
-    secondary = "turquoise",
+    secondary = "darkgreen",
     success = "green",
     info = "dodgerblue",
     warning = "yellow",
