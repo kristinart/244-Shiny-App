@@ -112,7 +112,9 @@ ui <- fluidPage(
                             strong("Data Citations:"),
                             p("Bang, C. 2013. Control of arthropod abundance, richness, and composition in the central Arizona-Phoenix metropolitan area ver 6. Environmental Data Initiative. https://doi.org/10.6073/pasta/22e305a8950091fe4d71ebec6142ecea (Accessed 2023-02-02)"),
                             p("TIGER/Line Shapefile, 2019. state, Arizona, Current Block Group State-based. 2021. catalog.data.gov."),
-                            br()
+                            br(),
+                            strong("Photo Credits:"),
+                            p("Desert photo: Loren Kerns, ", span("Arizona cacti, ", style = "font-style:italic"), "February 11, 2019. Flickr. https://flickr.com/photos/lorenkerns/46180722975/in/photolist-2gViqXF-2gViDpA-2gVirKD-2gVhBWm-2gViCB8-2gViz27-Q9rX85-P8TomX-P8Tpir-P8Tn46-Q9rVE5-P8TqYa-Q9rTRA-2dmQhj2-2dmQhwX-SBtpNq-2eEXzij-SBtoG7-jhUjGR-SBtoZ1-SBtpmo-2eEXBGN-2dmQh2D-aPtzpD-2eJGZdt")
                      )
                    ),#end of fluidrow
                    br()
