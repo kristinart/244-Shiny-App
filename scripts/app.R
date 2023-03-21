@@ -151,7 +151,7 @@ ui <- fluidPage(
                                      br(),
                                      br(),
                                      br(),
-                                     img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg", width = 350),
+                                     img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg", width = 450),
                                      p("A brittlebush plant.", "\n", "Photo Credit: Simon Tonge, iNaturalist. Photo 76846016. April 13, 2019. https://www.inaturalist.org/photos/76846016.")
                                      ) # end of columns 3
                            ),
@@ -182,6 +182,8 @@ ui <- fluidPage(
                                 labelWidth = "80px",
                                 onLabel = "YES",
                                 offLabel = "NO",
+                                offStatus = 'secondary',
+                                onStatus = 'success'
                               ),
                               br()
                                     ), # end sidebar panel
