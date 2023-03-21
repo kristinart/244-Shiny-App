@@ -77,7 +77,7 @@ ui <- fluidPage(
                      column(2,align="center", style = "background-color:#D4B2A7;",
                             br(),
                             img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/257913803/medium.jpeg", width = 175),
-                            p("Image of a cactus wren on a cactus in Arizona.")
+                            p("A cactus wren on a cactus in Arizona. Photo Credit: ChrisMcV, iNaturalist.", "https://www.inaturalist.org/", "\n", "observations/149655651")
                      ) #end of columns 3
                    ),
                    fluidRow(
@@ -112,9 +112,12 @@ ui <- fluidPage(
                             strong("Data Citations:"),
                             p("Bang, C. 2013. Control of arthropod abundance, richness, and composition in the central Arizona-Phoenix metropolitan area ver 6. Environmental Data Initiative. https://doi.org/10.6073/pasta/22e305a8950091fe4d71ebec6142ecea (Accessed 2023-02-02)"),
                             p("TIGER/Line Shapefile, 2019. state, Arizona, Current Block Group State-based. 2021. catalog.data.gov."),
-                            br(),
+                            p("GoogleMaps. Retreived February 2023."),
                             strong("Photo Credits:"),
-                            p("Desert photo: Loren Kerns, ", span("Arizona cacti, ", style = "font-style:italic"), "February 11, 2019. Flickr. https://flickr.com/photos/lorenkerns/46180722975/in/photolist-2gViqXF-2gViDpA-2gVirKD-2gVhBWm-2gViCB8-2gViz27-Q9rX85-P8TomX-P8Tpir-P8Tn46-Q9rVE5-P8TqYa-Q9rTRA-2dmQhj2-2dmQhwX-SBtpNq-2eEXzij-SBtoG7-jhUjGR-SBtoZ1-SBtpmo-2eEXBGN-2dmQh2D-aPtzpD-2eJGZdt")
+                            p("Desert Habitat photo: Loren Kerns, ", span("Arizona cacti, ", style = "font-style:italic"), "February 11, 2019. Flickr. https://flickr.com/photos/lorenkerns/46180722975/in/photolist-2gViqXF-2gViDpA-2gVirKD-2gVhBWm-2gViCB8-2gViz27-Q9rX85-P8TomX-P8Tpir-P8Tn46-Q9rVE5-P8TqYa-Q9rTRA-2dmQhj2-2dmQhwX-SBtpNq-2eEXzij-SBtoG7-jhUjGR-SBtoZ1-SBtpmo-2eEXBGN-2dmQh2D-aPtzpD-2eJGZdt"),
+                            p("Remnant Habitat photo: ksblack99, ", span("Low Clouds Over South Mountain, ", style = "font-style:italic"), "January 26, 2013. Flickr. https://www.flickr.com/photos/ksblack99/39443815802/in/photolist-F1y9PA-224zvFm-21NyoeR-239bXbz-236wo7C-F1y4Ny-21NymoM-x631yf-236wgAm-236vXzG-wP4uty-x4cxpS-x5UfAu-236vSeG-wzPNJT-tDoxEr-oxJDcx-JctgfT-F1xXqJ"),
+                            p("Urban Habitat photo: Silvio Wiggelinghoff, ", span("Arizona state practice field, ", style = "font-style:italic"), "January 10, 2022. Unsplash. https://unsplash.com/photos/LON7dzOYHiQ"),
+                            br()
                      )
                    ),#end of fluidrow
                    br()
@@ -148,7 +151,7 @@ ui <- fluidPage(
                                      br(),
                                      br(),
                                      img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/76846016/small.jpg", width = 350),
-                                     p("Image of a brittlebush plant.")
+                                     p("A brittlebush plant.", "\n", "Photo Credit: Simon Tonge, iNaturalist. Photo 76846016. April 13, 2019. https://www.inaturalist.org/photos/76846016.")
                                      ) # end of columns 3
                            ),
                            fluidRow(
@@ -212,7 +215,7 @@ ui <- fluidPage(
                                        The impact of treatment types on total arthropod count varied greatly by habitat type."),
                                      br(),
                                      img(src = "https://inaturalist-open-data.s3.amazonaws.com/photos/227161942/medium.jpeg", width = 575),
-                                     p("Image of arthropods on a brittlebush plant."),
+                                     p("Arthropods on a plant.", "\n", "Photo Credit: Lynn Harper, iNaturalist. Photo 227161942. August 26, 2022. https://www.inaturalist.org/photos/227161942"),
                                      br()
                               ),
                               column(7,style = "background-color:#D4B2A7;",
