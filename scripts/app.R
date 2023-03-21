@@ -13,6 +13,7 @@ library(sf)
 library(janitor)
 library(shinyWidgets)
 library(DT)
+library(shinydashboard)
 library(showtext)
 font_add_google("Poppins", family = "special")
 
@@ -52,10 +53,10 @@ ui <- fluidPage(
     heading_font = font_google("Poppins"),
     font_scale = 1
   ), ### end of theme
-  navbarPage(title = "Brittlebush Productivity and Arthropod Community Characteristics",
-                 tabPanel(title = "Background",
+   navbarPage(title = h1("Brittlebush Productivity and Arthropod Communities"),
+              tabPanel(title = ("BACKGROUND"),
                  fluidPage(
-                   titlePanel(h3("Introduction and Background", align = "center")),
+                   titlePanel(h3("Introduction and Background", align = 'center')),
                    br(),
                    fluidRow(
                      column(10, style = "background-color:#D4B2A7;",
@@ -124,7 +125,7 @@ ui <- fluidPage(
                    ) #end of fluid page
                  ), #end of tab 1
 
-             tabPanel("Brittlebush",
+             tabPanel(("BRITTLEBUSH"),
                  fluidPage(titlePanel(h3("Brittlebush Productivity Under Varying Conditions", align = "center")),
                            br(),
                            fluidRow(
@@ -200,7 +201,7 @@ ui <- fluidPage(
                  ) #end of fluidpage
                  ), #end of tab 2
 
-             tabPanel(title = "Arthropods",
+             tabPanel(title = ("ARTHROPODS"),
                           fluidPage(
                             titlePanel(h3("Arthropod Abundance on Brittlebush Grown Under Varying Conditions", align = "center")),
                             br(),
@@ -262,7 +263,7 @@ ui <- fluidPage(
                               ) #end of sidebar layout
                             ) #end of fluidpage
                  ) #end of tab 3
-                 )#end of navbarPage
+             )#end of navbarPage
 )
 
 #define app's server
